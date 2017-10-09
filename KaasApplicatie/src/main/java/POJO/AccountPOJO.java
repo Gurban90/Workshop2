@@ -1,7 +1,17 @@
 package POJO;
 
-public class AccountPOJO {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="Account")
+public class AccountPOJO {
+    
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int accountID;
     private String accountName;
     private String password;
