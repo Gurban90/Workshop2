@@ -6,8 +6,6 @@
 package Menu;
 
 import Controller.AccountController;
-import DatabaseConnector.DomXML;
-import Helper.DaoFactory;
 import Helper.TokenCreator;
 import Helper.Validator;
 import POJO.AccountPOJO;
@@ -19,7 +17,7 @@ import java.util.logging.Logger;
  *
  * @author Gerben
  */
-public class LoginMenu { 
+public class LoginMenu {
 
     Logger logger = Logger.getLogger(LoginMenu.class.getName());
     private Scanner input;
@@ -31,15 +29,14 @@ public class LoginMenu {
     private int status;
     private String accountIdString;
     private String accounStatusString;
-    private DomXML data;
+
     private AccountController controller;
     private Validator validator;
     private TokenCreator token;
 
     public void loginMenu() {
 
-        data = new DomXML();
-        controller = new AccountController(DaoFactory.createAccountDao(data.getDatabaseType()));
+        controller = new AccountController();
         validator = new Validator();
         input = new Scanner(System.in);
         token = new TokenCreator();
@@ -181,7 +178,6 @@ public class LoginMenu {
         System.out.print("Insert Password: ");
         this.password = input.nextLine();
         if (validator.stringValidator(this.password)) {
-            char[] charPass = password.toCharArray();
         } else {
             System.out.println("Password must have a value.");
             loginMenu();

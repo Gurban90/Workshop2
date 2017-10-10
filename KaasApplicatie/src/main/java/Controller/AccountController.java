@@ -5,9 +5,10 @@
  */
 package Controller;
 
-import Dao.AccountDAO;
 import Helper.PasswordHasher;
 import Helper.TokenCreator;
+import HibernateDao.HibernateAccountDAO;
+import HibernateDao.HibernateDaoFactory;
 import Interface.AccountDAOInterface;
 import POJO.AccountPOJO;
 import java.util.List;
@@ -30,13 +31,17 @@ public class AccountController {
     private String hashedPassword;
     private String totalPassword;
     private TokenCreator token;
+    private HibernateAccountDAO hibAccountDAO;
 
+    //Hibernate
     public AccountController() {
-        accountdao = new AccountDAO();
+        hibAccountDAO = (HibernateAccountDAO) HibernateDaoFactory.getInstance().getDao("account");
         accountpojo = new AccountPOJO();
+        passwordhasher = new PasswordHasher();
+        token = new TokenCreator();
     }
 
-    //Voor test
+    //Zonder Hibernate
     public AccountController(AccountDAOInterface accountdao) {
         this.accountdao = accountdao;
         accountpojo = new AccountPOJO();
@@ -46,19 +51,23 @@ public class AccountController {
 
     public boolean login(int id, String password) {
         LOGGER.info("login start");
-        accountpojo.setAccountID(id);
-        AccountPOJO foundAccount = accountdao.getAccount(accountpojo);
-        salt = foundAccount.getAccountPassword().substring(32);
-        hashedPassword = passwordhasher.hasher(password + salt);
-        totalPassword = hashedPassword + salt;
-        accountpojo.setAccountPassword(totalPassword);
-
-        if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
-            token.jwtCreator(id);
-            LOGGER.info("login end");
-            return true;
-        } else {
-            LOGGER.info("login end");
+        try{
+            AccountPOJO foundAccount = hibAccountDAO.findById(AccountPOJO.class, id);
+            salt = foundAccount.getAccountPassword().substring(32);
+            hashedPassword = passwordhasher.hasher(password + salt);
+            totalPassword = hashedPassword + salt;
+            accountpojo.setAccountPassword(totalPassword);
+            if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
+                token.jwtCreator(id);
+                LOGGER.info("login end");
+                return true;
+            } else {
+                LOGGER.info("login end");
+                return false;
+            }
+        }
+        catch(Exception E){
+            System.out.println("No account found.");
             return false;
         }
     }
@@ -70,20 +79,20 @@ public class AccountController {
         accountpojo.setAccountPassword(saltedHashedPassword);
         accountpojo.setAccountStatus(status);
         LOGGER.info("newAccount end");
-        return accountdao.addAccount(accountpojo);
+        hibAccountDAO.create(accountpojo);
+        return accountpojo.getAccountID();
     }
 
     public boolean removeAccount(int id, String password) {
         LOGGER.info("removeAccount start");
-        accountpojo.setAccountID(id);
-        AccountPOJO foundAccount = accountdao.getAccount(accountpojo);
+        AccountPOJO foundAccount = hibAccountDAO.findById(AccountPOJO.class, id);
         salt = foundAccount.getAccountPassword().substring(32);
         hashedPassword = passwordhasher.hasher(password + salt);
         totalPassword = hashedPassword + salt;
         accountpojo.setAccountPassword(totalPassword);
 
         if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
-            accountdao.deleteAccount(accountpojo);
+            hibAccountDAO.delete(AccountPOJO.class, id);
             LOGGER.info("removeAccount end");
             return true;
         } else {
@@ -94,54 +103,46 @@ public class AccountController {
 
     public String updateAccount(int id, String name, String password, int status) {
         LOGGER.info("updateAccount start");
-
         accountpojo.setAccountID(id);
         accountpojo.setAccountName(name);
         accountpojo.setAccountPassword(password);
         accountpojo.setAccountStatus(status);
-        accountdao.updateAccount(accountpojo);
+        hibAccountDAO.update(accountpojo);
         LOGGER.info("updateAccount end");
         return "Account has been updated.";
     }
 
     public String editAccountName(int id, String name) {
         LOGGER.info("editAccountName start");
-
-        accountpojo.setAccountID(id);
-        AccountPOJO accountpojo2 = accountdao.getAccount(accountpojo);
+        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
         accountpojo2.setAccountName(name);
-        accountdao.updateAccount(accountpojo2);
+        hibAccountDAO.update(accountpojo2);
         LOGGER.info("editAccountName end");
         return "Account has been updated.";
     }
 
     public String editAccountPassword(int id, String password) {
         LOGGER.info("editAccountPassword start");
-
-        accountpojo.setAccountID(id);
-        AccountPOJO accountpojo2 = accountdao.getAccount(accountpojo);
+        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
         saltedHashedPassword = passwordhasher.makeSaltedPasswordHash(password);
         accountpojo2.setAccountPassword(saltedHashedPassword);
-        accountdao.updateAccount(accountpojo2);
+        hibAccountDAO.update(accountpojo2);
         LOGGER.info("editAccountPassword end");
         return "Account has been updated.";
     }
 
     public String editAccountStatus(int id, int status) {
         LOGGER.info("editAccountStatus start");
-
-        accountpojo.setAccountID(id);
-        AccountPOJO accountpojo2 = accountdao.getAccount(accountpojo);
+        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
         accountpojo2.setAccountStatus(status);
-        accountdao.updateAccount(accountpojo2);
+        hibAccountDAO.update(accountpojo2);
         LOGGER.info("editAccountStatus end");
         return "Account has been updated.";
     }
 
     public AccountPOJO findAccount(int findId) {
         LOGGER.info("findAccount start");
-        accountpojo.setAccountID(findId);
-        AccountPOJO returnedAccount = accountdao.getAccount(accountpojo);
+        AccountPOJO returnedAccount = hibAccountDAO.findById(AccountPOJO.class, findId);
         LOGGER.info("findAccount end");
         return returnedAccount;
 
@@ -149,15 +150,14 @@ public class AccountController {
 
     public List<AccountPOJO> findAccountWithName(String name) {
         LOGGER.info("findAccountWithName start");
-        accountpojo.setAccountName(name);
-        List<AccountPOJO> returnedAccounts = accountdao.getAccountWithName(accountpojo);
+        List<AccountPOJO> returnedAccounts = hibAccountDAO.getAccountWithName(name);
         LOGGER.info("findAccountWithName end");
         return returnedAccounts;
     }
 
     public List<AccountPOJO> getAllAccounts() {
         LOGGER.info("GetAllAccounts start");
-        List<AccountPOJO> returnedAccounts = accountdao.getAllAccount();
+        List<AccountPOJO> returnedAccounts = hibAccountDAO.getAll();
         LOGGER.info("GetAllAccounts end");
         return returnedAccounts;
 

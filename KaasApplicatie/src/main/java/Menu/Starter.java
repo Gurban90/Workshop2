@@ -36,8 +36,8 @@ public class Starter {
      */
     public static void main(String[] args) {
         LogManager.getLogManager().reset();
-        ConnectionMenu menu = new ConnectionMenu();
-        menu.connectionMenu();
+        LoginMenu menu = new LoginMenu();
+        menu.loginMenu();
     }
 
 }

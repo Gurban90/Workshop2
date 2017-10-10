@@ -54,12 +54,12 @@ public class PasswordHasher {
         return this.encryptedPass;
     }
 
-    /*
+   
     public static void main(String[] args) {
         PasswordHasher tester = new PasswordHasher();
         String wachtwoord = tester.makeSaltedPasswordHash("password");
         String wachtwoord2 = tester.hasher("password");
 
     }
-    */
+    
 }
