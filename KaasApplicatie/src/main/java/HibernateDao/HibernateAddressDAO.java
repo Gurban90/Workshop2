@@ -5,9 +5,13 @@
  */
 package HibernateDao;
 
+import POJO.AddressPOJO;
+import POJO.AddressTypePOJO;
+import POJO.ClientPOJO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  *
@@ -21,11 +25,37 @@ public class HibernateAddressDAO extends GenericDAO {
     public HibernateAddressDAO(EntityManager em) {
         super(em);
     }
-
     
     @Override
-    public <T> List<T> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+     public List<AddressPOJO> getAll() {
+        LOGGER.info("getAllClient Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM AddressPOJO");
+        List<AddressPOJO> addresses = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAllClient End");
+        return addresses;
     }
     
+      public List<AddressPOJO> getAddressWithClient(int clientid) {
+        LOGGER.info("getAddressWithClient Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM AddressPOJO WHERE ClientID = :id");
+        query.setParameter("id", clientid);
+        List<AddressPOJO> addresses = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAddressWithClient end");
+        return addresses;
+    }
+      
+       public List<AddressTypePOJO> getAllAddressType() {
+        LOGGER.info("getAllAddressType Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM AddressTypePOJO");
+        List<AddressTypePOJO> addressTypes = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAllAddressType End");
+        return addressTypes;
+    }
+      
 }

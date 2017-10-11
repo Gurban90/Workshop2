@@ -5,17 +5,34 @@
  */
 package POJO;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 /**
  *
  * @author Gerben
  */
-//OPZET CLIENTPOJO
+@Entity
+@Table(name="Client")
 public class ClientPOJO {
-
+    
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int clientID;
+    
     private String firstName;
     private String lastName;
     private String eMail;
+    
+    @OneToMany(mappedBy = "Address")
+    List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
+    
 
     public ClientPOJO() {
     }
@@ -27,6 +44,14 @@ public class ClientPOJO {
         this.eMail = eMail;
     }
 
+    public List<AddressPOJO> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<AddressPOJO> addresses) {
+        this.addresses = addresses;
+    }
+        
     public int getClientID() {
         return clientID;
     }

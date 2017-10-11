@@ -1,8 +1,6 @@
 package Menu;
 
 import Controller.ClientController;
-import DatabaseConnector.DomXML;
-import Helper.DaoFactory;
 import Helper.Validator;
 import POJO.ClientPOJO;
 import java.util.*;
@@ -11,7 +9,6 @@ import java.util.logging.Logger;
 public class ClientMenu {
 
     static final Logger LOGGER = Logger.getLogger(ClientMenu.class.getName());
-
     private Scanner input;
     private int choice;
     private int editChoice;
@@ -24,17 +21,15 @@ public class ClientMenu {
     private String ClientIDString;
     ClientPOJO returnedClient;
     List<ClientPOJO> returnedClientList;
-    private DomXML data;
+    
     private ClientController controller;
     private Validator validator;
 
     public void clientMenu() {
 
         LOGGER.info("clientMenu start");
-
-        data = new DomXML();
         input = new Scanner(System.in);
-        controller = new ClientController(DaoFactory.createClientDao(data.getDatabaseType()));
+        controller = new ClientController();
         validator = new Validator();
         input = new Scanner(System.in);
 

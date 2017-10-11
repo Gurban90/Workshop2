@@ -5,7 +5,9 @@
  */
 package Controller;
 
-import Dao.AddressDAO;
+import Helper.HibernateDaoFactory;
+import HibernateDao.HibernateAddressDAO;
+import HibernateDao.HibernateClientDAO;
 import Interface.AddressDAOInterface;
 import Interface.ClientDAOInterface;
 import POJO.AddressPOJO;
@@ -27,12 +29,16 @@ public class AddressController {
     private ClientPOJO clientpojo;
     private AddressTypePOJO addresstypepojo;
     private ClientDAOInterface clientdao;
+    private HibernateAddressDAO hibAddressDAO;
+    private HibernateClientDAO hibClientDAO;
 
     public AddressController() {
-        addressdao = new AddressDAO();
+        hibAddressDAO = (HibernateAddressDAO) HibernateDaoFactory.getInstance().getDao("address");
         addresspojo = new AddressPOJO();
         clientpojo = new ClientPOJO();
         addresstypepojo = new AddressTypePOJO();
+        hibClientDAO = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
+
     }
 
     public AddressController(AddressDAOInterface addressdao, ClientDAOInterface clientdao) {
@@ -45,132 +51,124 @@ public class AddressController {
 
     public List<AddressPOJO> findAllAddress() {
         LOGGER.info("findAllAddress start");
+        List<AddressPOJO> addresses = hibAddressDAO.getAll();
+        hibAddressDAO.finalize();
         LOGGER.info("findAllAddress end");
-        return addressdao.getAllAddress();
+        return addresses;
     }
 
     public AddressPOJO findAddress(int ID) {
         LOGGER.info("findAddress start");
-
-        addresspojo.setAddressID(ID);
-        AddressPOJO returnedAddress = addressdao.getAddress(addresspojo);
+        AddressPOJO returnedAddress = hibAddressDAO.findById(AddressPOJO.class, ID);
+        hibAddressDAO.finalize();
         LOGGER.info("findAddress end");
         return returnedAddress;
     }
 
     public List<AddressPOJO> findAddressWithClient(int clientID) {
         LOGGER.info("findAddressWithClient start");
-
-        clientpojo.setClientID(clientID);
-        List<AddressPOJO> returnedAddresses = addressdao.getAddressWithClient(clientpojo);
+        List<AddressPOJO> returnedAddresses = hibAddressDAO.getAddressWithClient(clientID);
+        hibAddressDAO.finalize();
         LOGGER.info("findAddressWithClient end");
         return returnedAddresses;
     }
 
-    public List<ClientPOJO> findAddressWithClientName(String lastName) {
+    public List<ClientPOJO> findAddressWithClientName(String lastName) {/////////////////////////////////////
         LOGGER.info("findAddressWithClientName start");
-        List<ClientPOJO> returnedClients = clientdao.getClientWithLastName(lastName);
-
+        List<ClientPOJO> returnedClients = hibClientDAO.getClientWithLastName(lastName);
+        hibClientDAO.finalize();
         LOGGER.info("findAddressWithClientName end");
         return returnedClients;
     }
 
     public int newAddress(int houseNumber, String houseNumberAddition, String streetName, String postalCode, String city, int clientID, int addresstypeID) {
         LOGGER.info("newAddress start");
-        addresspojo.setHouseNumber(houseNumber);
-        addresspojo.setHouseNumberAddition(houseNumberAddition);
-        addresspojo.setStreetName(streetName);
-        addresspojo.setPostalCode(postalCode);
-        addresspojo.setCity(city);
-        addresspojo.setClientID(clientID);
-        addresspojo.setAddressTypeID(addresstypeID);
+        try {
+            addresspojo.setHouseNumber(houseNumber);
+            addresspojo.setHouseNumberAddition(houseNumberAddition);
+            addresspojo.setStreetName(streetName);
+            addresspojo.setPostalCode(postalCode);
+            addresspojo.setCity(city);
+            addresspojo.setClient(hibClientDAO.findById(ClientPOJO.class, clientID));
+            addresspojo.setAddresstype(hibAddressDAO.findById(AddressTypePOJO.class, addresstypeID));
+        } catch (Exception E) {
+            System.out.println("First create Client and AddressType");
+        }
+        hibAddressDAO.create(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("newAddress end");
-        return addressdao.addAddress(addresspojo);
+        return addresspojo.getAddressID();
     }
 
     public void removeAddress(int ID) {
         LOGGER.info("removeAddress start");
-
-        addresspojo.setAddressID(ID);
-        addressdao.deleteAddress(addresspojo);
+        hibAddressDAO.delete(AddressPOJO.class, ID);
+        hibAddressDAO.finalize();
         LOGGER.info("removeAddress end");
     }
 
     public String editAddress(int id, int houseNumber, String houseNumberAddition, String streetName, String postalCode, String city) {
         LOGGER.info("editAddress start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setHouseNumber(houseNumber);
         addresspojo.setHouseNumberAddition(houseNumberAddition);
         addresspojo.setStreetName(streetName);
         addresspojo.setPostalCode(postalCode);
         addresspojo.setCity(city);
-
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editAddress end");
-        return "Address has been edited: ";
+        return "Address has been edited.";
     }
 
     public String editHouseNumber(int id, int housenumber) {
         LOGGER.info("editHouseNumber start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setHouseNumber(housenumber);
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editHouseNumber end");
-        return "Address has been edited. ";
+        return "Address has been edited.";
     }
 
     public String editHouseNumberAddition(int id, String housenumberaddition) {
         LOGGER.info("editHouseNumberAddition start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setHouseNumberAddition(housenumberaddition);
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editHouseNumberAddition end");
-        return "Address has been edited. ";
+        return "Address has been edited.";
     }
 
     public String editStreetName(int id, String streetname) {
         LOGGER.info("editStreetName start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setStreetName(streetname);
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editStreetName end");
-        return "Address has been edited. ";
+        return "Address has been edited.";
     }
 
     public String editPostalCode(int id, String postalcode) {
         LOGGER.info("editPostalCode start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setPostalCode(postalcode);
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editPostalCode end");
-        return "Address has been edited. ";
+        return "Address has been edited.";
     }
 
     public String editCity(int id, String city) {
         LOGGER.info("editCity start");
-        AddressPOJO getAddress = new AddressPOJO();
-
-        getAddress.setAddressID(id);
-        addresspojo = addressdao.getAddress(getAddress);
+        addresspojo = hibAddressDAO.findById(AddressPOJO.class, id);
         addresspojo.setCity(city);
-        addressdao.updateAddress(addresspojo);
+        hibAddressDAO.update(addresspojo);
+        hibAddressDAO.finalize();
         LOGGER.info("editCity end");
-        return "Address has been edited. ";
+        return "Address has been edited.";
     }
 
 }

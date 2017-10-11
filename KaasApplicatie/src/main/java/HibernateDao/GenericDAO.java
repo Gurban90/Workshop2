@@ -19,6 +19,8 @@ public abstract class GenericDAO {
     public GenericDAO(EntityManager em) {
         this.em = em;
     }
+    
+    public GenericDAO(){};
 
     public <T> T create(T entity) {
         em.getTransaction().begin();

@@ -1,11 +1,31 @@
 package POJO;
 
-public class AddressPOJO {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="Address")
+public class AddressPOJO {
+    
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int addressID;
+    
+    @ManyToOne
+    @JoinColumn(name="ClientID", referencedColumnName="clientID")
     private ClientPOJO client;
+    
     private int clientID;
+    
+    @ManyToOne
+    @JoinColumn(name="AddressTypeID", referencedColumnName="addressTypeID")
     private AddressTypePOJO addresstype;
+    
     private int addressTypeID;
     private int housenumber;
     private String houseNumberAddition;

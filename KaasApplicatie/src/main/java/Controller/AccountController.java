@@ -8,7 +8,7 @@ package Controller;
 import Helper.PasswordHasher;
 import Helper.TokenCreator;
 import HibernateDao.HibernateAccountDAO;
-import HibernateDao.HibernateDaoFactory;
+import Helper.HibernateDaoFactory;
 import Interface.AccountDAOInterface;
 import POJO.AccountPOJO;
 import java.util.List;

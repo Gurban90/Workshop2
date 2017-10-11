@@ -37,16 +37,13 @@ public class AddressMenu {
     private String clientIDString;
     private String addressTypeIDString;
     private String clientLastName;
-    private DomXML data;
     private AddressController controller;
     private Validator validator;
 
     public void addressMenu() {
 
         LOGGER.info("addressMenu start");
-
-        data = new DomXML();
-        controller = new AddressController(DaoFactory.createAddressDao(data.getDatabaseType()), DaoFactory.createClientDao(data.getDatabaseType()));
+        controller = new AddressController();
         validator = new Validator();
         input = new Scanner(System.in);
 
