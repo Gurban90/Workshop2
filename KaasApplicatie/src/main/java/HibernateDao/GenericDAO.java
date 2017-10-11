@@ -13,53 +13,45 @@ import javax.persistence.EntityManager;
  * @author Gerben
  */
 public abstract class GenericDAO {
+
     protected EntityManager em;
-   
-    
-    public GenericDAO(EntityManager em){
+
+    public GenericDAO(EntityManager em) {
         this.em = em;
     }
-    
-    
 
     public <T> T create(T entity) {
         em.getTransaction().begin();
         em.persist(entity);
         em.getTransaction().commit();
-        em.close();//////////////////////////////////////////////////////
         return entity;
     }
-    
-    public <T> T findById (Class<T> type, Integer id){
+
+    public <T> T findById(Class<T> type, Integer id) {
         em.getTransaction().begin();
         T entity = em.find(type, id);
         em.getTransaction().commit();
-        em.close();///////////////////////////////////////////////////////////
         return entity;
     }
-    
+
     public abstract <T> List<T> getAll();
-    
-    public <T> void update(T entity){
+
+    public <T> void update(T entity) {
         em.getTransaction().begin();
         em.merge(entity);
         em.getTransaction().commit();
-        em.close();//////////////////////////////////////////////////////
-    }
-    
-    public <T> void delete(Class<T> type, Integer id){
-        em.getTransaction().begin();
-        T entity = em.find(type, id); 
-        em.remove(entity);
-        em.getTransaction().commit();
-        em.close();/////////////////////////////////////////
-    }
-    
-    @Override
-    public void finalize(){
-        em.close();/////////////////////////////////////////
     }
 
- 
+    public <T> void delete(Class<T> type, Integer id) {
+        em.getTransaction().begin();
+        T entity = em.find(type, id);
+        em.remove(entity);
+        em.getTransaction().commit();
+    }
+
+    @Override
+    public void finalize() {
+        em.close();
+    }
 
 }
