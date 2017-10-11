@@ -51,7 +51,7 @@ public class AccountController {
 
     public boolean login(int id, String password) {
         LOGGER.info("login start");
-        try{
+        try {
             AccountPOJO foundAccount = hibAccountDAO.findById(AccountPOJO.class, id);
             salt = foundAccount.getAccountPassword().substring(32);
             hashedPassword = passwordhasher.hasher(password + salt);
@@ -65,10 +65,11 @@ public class AccountController {
                 LOGGER.info("login end");
                 return false;
             }
-        }
-        catch(Exception E){
+        } catch (Exception E) {
             System.out.println("No account found.");
             return false;
+        } finally {
+            hibAccountDAO.finalize();
         }
     }
 
@@ -80,6 +81,7 @@ public class AccountController {
         accountpojo.setAccountStatus(status);
         LOGGER.info("newAccount end");
         hibAccountDAO.create(accountpojo);
+        hibAccountDAO.finalize();
         return accountpojo.getAccountID();
     }
 
@@ -93,10 +95,12 @@ public class AccountController {
 
         if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
             hibAccountDAO.delete(AccountPOJO.class, id);
+            hibAccountDAO.finalize();
             LOGGER.info("removeAccount end");
             return true;
         } else {
             LOGGER.info("removeAccount end");
+            hibAccountDAO.finalize();
             return false;
         }
     }
@@ -108,6 +112,7 @@ public class AccountController {
         accountpojo.setAccountPassword(password);
         accountpojo.setAccountStatus(status);
         hibAccountDAO.update(accountpojo);
+        hibAccountDAO.finalize();
         LOGGER.info("updateAccount end");
         return "Account has been updated.";
     }
@@ -117,6 +122,7 @@ public class AccountController {
         AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
         accountpojo2.setAccountName(name);
         hibAccountDAO.update(accountpojo2);
+        hibAccountDAO.finalize();
         LOGGER.info("editAccountName end");
         return "Account has been updated.";
     }
@@ -127,6 +133,7 @@ public class AccountController {
         saltedHashedPassword = passwordhasher.makeSaltedPasswordHash(password);
         accountpojo2.setAccountPassword(saltedHashedPassword);
         hibAccountDAO.update(accountpojo2);
+        hibAccountDAO.finalize();
         LOGGER.info("editAccountPassword end");
         return "Account has been updated.";
     }
@@ -136,6 +143,7 @@ public class AccountController {
         AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
         accountpojo2.setAccountStatus(status);
         hibAccountDAO.update(accountpojo2);
+        hibAccountDAO.finalize();
         LOGGER.info("editAccountStatus end");
         return "Account has been updated.";
     }
@@ -143,6 +151,7 @@ public class AccountController {
     public AccountPOJO findAccount(int findId) {
         LOGGER.info("findAccount start");
         AccountPOJO returnedAccount = hibAccountDAO.findById(AccountPOJO.class, findId);
+        hibAccountDAO.finalize();
         LOGGER.info("findAccount end");
         return returnedAccount;
 
@@ -151,6 +160,7 @@ public class AccountController {
     public List<AccountPOJO> findAccountWithName(String name) {
         LOGGER.info("findAccountWithName start");
         List<AccountPOJO> returnedAccounts = hibAccountDAO.getAccountWithName(name);
+        hibAccountDAO.finalize();
         LOGGER.info("findAccountWithName end");
         return returnedAccounts;
     }
@@ -158,6 +168,7 @@ public class AccountController {
     public List<AccountPOJO> getAllAccounts() {
         LOGGER.info("GetAllAccounts start");
         List<AccountPOJO> returnedAccounts = hibAccountDAO.getAll();
+        hibAccountDAO.finalize();
         LOGGER.info("GetAllAccounts end");
         return returnedAccounts;
 

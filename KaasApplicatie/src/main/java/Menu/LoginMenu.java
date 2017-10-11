@@ -223,7 +223,6 @@ public class LoginMenu {
         }
         if (controller.removeAccount(id, password)) {
             System.out.print("Account has been deleted.");
-            input.nextLine();
             loginMenu();
         } else {
             System.out.println("Wrong password or accountnumber, try again.");
