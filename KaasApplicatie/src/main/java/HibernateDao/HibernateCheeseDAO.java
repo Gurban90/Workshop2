@@ -15,8 +15,8 @@ import javax.persistence.EntityManager;
  */
 public class HibernateCheeseDAO extends GenericDAO {
 
-   private Logger LOGGER = Logger.getLogger(HibernateAccountDAO.class.getName());
-    private EntityManager em;
+   private Logger LOGGER = Logger.getLogger(HibernateCheeseDAO.class.getName());
+   
     
     public HibernateCheeseDAO(EntityManager em) {
         super(em);

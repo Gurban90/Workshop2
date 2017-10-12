@@ -15,8 +15,8 @@ import javax.persistence.EntityManager;
  */
 public class HibernateOrderDAO extends GenericDAO {
 
-     private Logger LOGGER = Logger.getLogger(HibernateAccountDAO.class.getName());
-    private EntityManager em;
+     private Logger LOGGER = Logger.getLogger(HibernateOrderDAO.class.getName());
+    
     
     public HibernateOrderDAO(EntityManager em) {
         super(em);

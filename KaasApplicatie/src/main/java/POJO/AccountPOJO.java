@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -11,11 +13,17 @@ import javax.persistence.Table;
 public class AccountPOJO {
     
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int accountID;
     private String accountName;
     private String password;
     private int accountStatus;
+    
+    @OneToOne
+    @JoinColumn(name="ClientID", referencedColumnName="ClientID")
+    private ClientPOJO client;
+
+
 
     public AccountPOJO() {
     }
@@ -26,6 +34,16 @@ public class AccountPOJO {
         this.password = password;
         this.accountStatus = accountStatus;
     }
+
+    public ClientPOJO getClient() {
+        return client;
+    }
+
+    public void setClient(ClientPOJO client) {
+        this.client = client;
+    }
+    
+    
 
     public int getAccountID() {
         return accountID;
@@ -61,7 +79,8 @@ public class AccountPOJO {
 
     @Override
     public String toString() {
-        return "AccountID: " + accountID + ", AccountName: " + accountName + " Password: " + password + ", AccountStatus: " + accountStatus;
+        return "AccountID: " + accountID + ", AccountName: " + accountName + " Password: " + password + ", AccountStatus: " + accountStatus+ ", Client: " + 
+                client;
     }
 
 }

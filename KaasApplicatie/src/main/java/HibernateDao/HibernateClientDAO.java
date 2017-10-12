@@ -17,14 +17,12 @@ import javax.persistence.Query;
  */
 public class HibernateClientDAO extends GenericDAO {
 
-    private Logger LOGGER = Logger.getLogger(HibernateAccountDAO.class.getName());
-    private EntityManager em;
+    private Logger LOGGER = Logger.getLogger(HibernateClientDAO.class.getName());
+   
 
     public HibernateClientDAO(EntityManager em) {
         super(em);
     }
-
-    public HibernateClientDAO(){};
 
     @Override
     public List<ClientPOJO> getAll() {
@@ -36,11 +34,11 @@ public class HibernateClientDAO extends GenericDAO {
         LOGGER.info("getAllClient End");
         return clients;
     }
-
+     
     public List<ClientPOJO> getClientWithFirstName(String firstname) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
-        Query query = em.createQuery("FROM AccountPOJO WHERE firstName = :name");
+        Query query = em.createQuery("FROM ClientPOJO WHERE firstname = :name");
         query.setParameter("name", firstname);
         List<ClientPOJO> clients = query.getResultList();
         em.getTransaction().commit();
@@ -51,7 +49,7 @@ public class HibernateClientDAO extends GenericDAO {
     public List<ClientPOJO> getClientWithLastName(String lastname) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
-        Query query = em.createQuery("FROM AccountPOJO WHERE lastName = :name");
+        Query query = em.createQuery("FROM ClientPOJO WHERE lastname = :name");
         query.setParameter("name", lastname);
         List<ClientPOJO> clients = query.getResultList();
         em.getTransaction().commit();
@@ -62,12 +60,13 @@ public class HibernateClientDAO extends GenericDAO {
     public List<ClientPOJO> getClientWithEmail(String email) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
-        Query query = em.createQuery("FROM AccountPOJO WHERE eMail = :mail");
+        Query query = em.createQuery("FROM ClientPOJO WHERE email = :mail");
         query.setParameter("mail", email);
         List<ClientPOJO> clients = query.getResultList();
         em.getTransaction().commit();
         LOGGER.info("getAccountWithName end");
         return clients;
     }
+    
 
 }

@@ -21,7 +21,9 @@ public class ClientMenu {
     private String ClientIDString;
     ClientPOJO returnedClient;
     List<ClientPOJO> returnedClientList;
-    
+    private String accountIDString;
+    private int accountID;
+
     private ClientController controller;
     private Validator validator;
 
@@ -190,6 +192,14 @@ public class ClientMenu {
             System.out.println("First name cannot be empty.");
             clientMenu();
         }
+        System.out.print("Insert your AccountID: ");
+        accountIDString = input.nextLine();
+        if (validator.idValidator(this.accountIDString)) {
+            accountID = Integer.parseInt(this.accountIDString);
+        } else {
+            System.out.println("AccountID cannot be empty.");
+            clientMenu();
+        }
         System.out.print("Insert Client Last name: ");
         lastName = input.nextLine();
         if (validator.stringValidator(lastName)) {
@@ -200,8 +210,7 @@ public class ClientMenu {
         System.out.print("Insert Client email: ");
         eMail = input.nextLine();
         if (validator.eMailValidator(eMail)) {
-            clientID = controller.newClient(this.firstName, this.lastName, this.eMail);
-            System.out.println("New Client added with the ClientID of: " + clientID);
+            controller.newClient(this.firstName, this.lastName, this.eMail, this.accountID);
             clientMenu();
             LOGGER.info("newClient end");
         } else {

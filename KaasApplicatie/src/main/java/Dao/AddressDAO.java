@@ -23,6 +23,7 @@ import java.util.List;
  *
  * @author Jasper Thielen
  */
+
 public class AddressDAO implements AddressDAOInterface {
 
     private Logger LOGGER = Logger.getLogger(AddressDAOInterface.class.getName());
@@ -40,12 +41,12 @@ public class AddressDAO implements AddressDAOInterface {
         try {
              connect = connectionfactory.getConnection();
             statement = connect.prepareStatement(query);
-            statement.setInt(1, address.getClientID());
+            statement.setInt(1, address.getClientIdentifier());
             this.resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 this.query = "select * from AddressType where AddressTypeID = ?";
                 statement = connect.prepareStatement(query);
-                statement.setInt(1, address.getAddressTypeID());
+                statement.setInt(1, address.getAddressTypeIdentifier());
                 this.resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     this.query = "INSERT INTO Address (StreetName, HouseNumber, HouseNumberAddition, PostalCode, City, Client_ClientID, AddressType_AddressTypeID ) VALUES (?,?,?,?,?,?,?);";
@@ -56,8 +57,8 @@ public class AddressDAO implements AddressDAOInterface {
                     statement.setString(3, address.getHouseNumberAddition());
                     statement.setString(4, address.getPostalCode());
                     statement.setString(5, address.getCity());
-                    statement.setInt(6, address.getClientID());
-                    statement.setInt(7, address.getAddressTypeID());
+                    statement.setInt(6, address.getClientIdentifier());
+                    statement.setInt(7, address.getAddressTypeIdentifier());
                     statement.executeUpdate();
 
                     try (ResultSet resultSet3 = statement.getGeneratedKeys()) {
@@ -108,8 +109,8 @@ public class AddressDAO implements AddressDAOInterface {
                 foundAddress.setHouseNumberAddition(resultSet.getString(4));
                 foundAddress.setPostalCode(resultSet.getString(5));
                 foundAddress.setCity(resultSet.getString(6));
-                foundAddress.setClientID(resultSet.getInt(7));
-                foundAddress.setAddressTypeID(resultSet.getInt(8));
+                foundAddress.setClientIdentifier(resultSet.getInt(7));
+                foundAddress.setAddressTypeIdentifier(resultSet.getInt(8));
 
             }
             resultSet.close();
@@ -150,8 +151,8 @@ public class AddressDAO implements AddressDAOInterface {
                 foundAddress.setHouseNumberAddition(resultSet.getString(4));
                 foundAddress.setPostalCode(resultSet.getString(5));
                 foundAddress.setCity(resultSet.getString(6));
-                foundAddress.setClientID(resultSet.getInt(7));
-                foundAddress.setAddressTypeID(resultSet.getInt(8));
+                foundAddress.setClientIdentifier(resultSet.getInt(7));
+                foundAddress.setAddressTypeIdentifier(resultSet.getInt(8));
                 returnedAddress.add(foundAddress);
             }
             resultSet.close();
@@ -189,8 +190,8 @@ public class AddressDAO implements AddressDAOInterface {
                 foundAddress.setHouseNumberAddition(resultSet.getString(4));
                 foundAddress.setPostalCode(resultSet.getString(5));
                 foundAddress.setCity(resultSet.getString(6));
-                foundAddress.setClientID(resultSet.getInt(7));
-                foundAddress.setAddressTypeID(resultSet.getInt(8));
+                foundAddress.setClientIdentifier(resultSet.getInt(7));
+                foundAddress.setAddressTypeIdentifier(resultSet.getInt(8));
                 returnedAddress.add(foundAddress);
             }
             resultSet.close();
@@ -219,8 +220,8 @@ public class AddressDAO implements AddressDAOInterface {
             statement.setString(3, address.getHouseNumberAddition());
             statement.setString(4, address.getPostalCode());
             statement.setString(5, address.getCity());
-            statement.setInt(6, address.getClientID());
-            statement.setInt(7, address.getAddressTypeID());
+            statement.setInt(6, address.getClientIdentifier());
+            statement.setInt(7, address.getAddressTypeIdentifier());
             statement.setInt(8, address.getAddressID());
             statement.executeUpdate();
         } catch (SQLException e) {

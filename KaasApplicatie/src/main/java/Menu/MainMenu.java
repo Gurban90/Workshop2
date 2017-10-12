@@ -26,7 +26,8 @@ public class MainMenu {
                 + "1. Order Menu" + "\n"
                 + "2. Cheese Menu" + "\n"
                 + "3. Client Menu" + "\n"
-                + "4. Exit" + "\n"
+                + "4. Go back to loginMenu" + "\n"
+                + "5. Exit" + "\n"
                 + "Please enter the number of your choice: ");
 
         String choiceNumber = input.nextLine();
@@ -34,30 +35,35 @@ public class MainMenu {
 
             choice = Integer.parseInt(choiceNumber);
 
-        switch (choice) {
-            case 1:
-                LOGGER.info("Open OrderMenu");
-                OrderMenu ordermenu = new OrderMenu();
-                ordermenu.orderMenu();
-                break;
-            case 2:
-                LOGGER.info("Open CheeseMenu");
-                CheeseMenu cheesemenu = new CheeseMenu();
-                cheesemenu.cheeseMenu();
-                break;
-            case 3:
-                LOGGER.info("Open ClientMenu");
-                ClientMenu clientmenu = new ClientMenu();
-                clientmenu.clientMenu();
-                break;
-            case 4:
-                System.out.println("Goodbye...");
-                System.exit(0);
-            default:
-                System.out.println("Wrong number, try again.");
-                MainMenu mainmenu = new MainMenu();
-                mainmenu.mainMenu();
-        }
+            switch (choice) {
+                case 1:
+                    LOGGER.info("Open OrderMenu");
+                    OrderMenu ordermenu = new OrderMenu();
+                    ordermenu.orderMenu();
+                    break;
+                case 2:
+                    LOGGER.info("Open CheeseMenu");
+                    CheeseMenu cheesemenu = new CheeseMenu();
+                    cheesemenu.cheeseMenu();
+                    break;
+                case 3:
+                    LOGGER.info("Open ClientMenu");
+                    ClientMenu clientmenu = new ClientMenu();
+                    clientmenu.clientMenu();
+                    break;
+                case 4:
+                    LOGGER.info("Open LoginMenu");
+                    LoginMenu menu = new LoginMenu();
+                    menu.loginMenu();
+                    break;
+                case 5:
+                    System.out.println("Goodbye...");
+                    System.exit(0);
+                default:
+                    System.out.println("Wrong number, try again.");
+                    MainMenu mainmenu = new MainMenu();
+                    mainmenu.mainMenu();
+            }
         } else {
             System.out.println("Choice must be an integer.");
             MainMenu mainmenu = new MainMenu();

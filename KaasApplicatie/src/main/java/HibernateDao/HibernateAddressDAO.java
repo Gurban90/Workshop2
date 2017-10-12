@@ -11,6 +11,7 @@ import POJO.ClientPOJO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 
 /**
@@ -19,13 +20,14 @@ import javax.persistence.Query;
  */
 public class HibernateAddressDAO extends GenericDAO {
     
-    private Logger LOGGER = Logger.getLogger(HibernateAccountDAO.class.getName());
-    private EntityManager em;
+    private Logger LOGGER = Logger.getLogger(HibernateAddressDAO.class.getName());
+    
     
     public HibernateAddressDAO(EntityManager em) {
         super(em);
     }
     
+     
     @Override
      public List<AddressPOJO> getAll() {
         LOGGER.info("getAllClient Start");
@@ -57,5 +59,10 @@ public class HibernateAddressDAO extends GenericDAO {
         LOGGER.info("getAllAddressType End");
         return addressTypes;
     }
+       
+      
+
+       
+       
       
 }

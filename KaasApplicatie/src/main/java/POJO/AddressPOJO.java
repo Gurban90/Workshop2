@@ -7,26 +7,30 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="Address")
 public class AddressPOJO {
     
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int addressID;
     
     @ManyToOne
     @JoinColumn(name="ClientID", referencedColumnName="clientID")
     private ClientPOJO client;
     
-    private int clientID;
+    @Transient
+    private int clientIdentifier;
     
     @ManyToOne
     @JoinColumn(name="AddressTypeID", referencedColumnName="addressTypeID")
     private AddressTypePOJO addresstype;
     
-    private int addressTypeID;
+    @Transient
+    private int addressTypeIdentifier;
+    
     private int housenumber;
     private String houseNumberAddition;
     private String streetname;
@@ -44,8 +48,8 @@ public class AddressPOJO {
         this.houseNumberAddition = HouseNumberAddition;
         this.postalCode = PostalCode;
         this.city = City;
-        this.clientID = ClientID;
-        this.addressTypeID = AddressTypeID;
+        this.clientIdentifier = ClientID;
+        this.addressTypeIdentifier = AddressTypeID;
     }
 
     public AddressTypePOJO getAddresstype() {
@@ -112,26 +116,26 @@ public class AddressPOJO {
         this.city = city;
     }
 
-    public int getClientID() {
-        return clientID;
+    public int getClientIdentifier() {
+        return clientIdentifier;
     }
 
-    public void setClientID(int ClientID) {
-        this.clientID = ClientID;
+    public void setClientIdentifier(int ClientID) {
+        this.clientIdentifier = ClientID;
     }
 
-    public int getAddressTypeID() {
-        return addressTypeID;
+    public int getAddressTypeIdentifier() {
+        return addressTypeIdentifier;
     }
 
-    public void setAddressTypeID(int addressTypeID) {
-        this.addressTypeID = addressTypeID;
+    public void setAddressTypeIdentifier(int addressTypeIdentifier) {
+        this.addressTypeIdentifier = addressTypeIdentifier;
     }
 
     @Override
     public String toString() {
         return "AddressID: " + addressID + ", Housenumber: " + housenumber + ", Housenumber Addition: " + houseNumberAddition + ", Streetname: " + streetname
-                + ", Postal Code: " + postalCode + ", City: " + city + ", ClientID: " + clientID + ", AddressTypeID: " + addressTypeID;
+                + ", Postal Code: " + postalCode + ", City: " + city + ", ClientID: " + client.getClientID() + ", AddressTypeID: " + addresstype.getAddressTypeID();
     }
 
 }

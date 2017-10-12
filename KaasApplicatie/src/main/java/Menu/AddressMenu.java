@@ -205,8 +205,7 @@ public class AddressMenu {
         this.addressTypeIDString = input.nextLine();
         if (validator.idValidator(this.addressTypeIDString)) {
             this.addressTypeID = Integer.parseInt(this.addressTypeIDString);
-            int addressID = controller.newAddress(housenumber, housenumberAddition, streetname, postalCode, city, clientID, addressTypeID);
-            System.out.println("Address is added and has ID: " + addressID);
+            controller.newAddress(housenumber, housenumberAddition, streetname, postalCode, city, clientID, addressTypeID);
             addressMenu();
         } else {
             System.out.println("AddressTypeID must be an integer and between 0 and 1000.");

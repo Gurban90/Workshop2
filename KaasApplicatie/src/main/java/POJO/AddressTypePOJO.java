@@ -14,11 +14,12 @@ import javax.persistence.Table;
 public class AddressTypePOJO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int addressTypeID;
+    
     private String addressType;
 
-    @OneToMany(mappedBy = "Address")
+    @OneToMany(mappedBy = "addresstype")
     List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
 
     public AddressTypePOJO(){};

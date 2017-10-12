@@ -8,10 +8,12 @@ package POJO;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -19,20 +21,22 @@ import javax.persistence.Table;
  * @author Gerben
  */
 @Entity
-@Table(name="Client")
+@Table(name = "Client")
 public class ClientPOJO {
-    
+
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int clientID;
-    
+
     private String firstName;
     private String lastName;
     private String eMail;
-    
-    @OneToMany(mappedBy = "Address")
+
+    @OneToMany(mappedBy = "client")
     List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
-    
+
+    @OneToOne(mappedBy = "client")
+    private AccountPOJO account;
 
     public ClientPOJO() {
     }
@@ -44,6 +48,14 @@ public class ClientPOJO {
         this.eMail = eMail;
     }
 
+    public AccountPOJO getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountPOJO account) {
+        this.account = account;
+    }
+
     public List<AddressPOJO> getAddresses() {
         return addresses;
     }
@@ -51,7 +63,7 @@ public class ClientPOJO {
     public void setAddresses(List<AddressPOJO> addresses) {
         this.addresses = addresses;
     }
-        
+
     public int getClientID() {
         return clientID;
     }

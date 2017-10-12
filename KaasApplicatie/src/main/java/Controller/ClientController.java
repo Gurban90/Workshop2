@@ -2,11 +2,14 @@ package Controller;
 
 import Dao.ClientDAO;
 import Helper.HibernateDaoFactory;
+import HibernateDao.HibernateAccountDAO;
 import HibernateDao.HibernateClientDAO;
 import Interface.ClientDAOInterface;
+import POJO.AccountPOJO;
 import POJO.ClientPOJO;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
 
 public class ClientController {
 
@@ -14,10 +17,14 @@ public class ClientController {
     private ClientDAOInterface clientdao;
     private ClientPOJO clientpojo;
     private HibernateClientDAO hibClientDAO;
+    private AccountPOJO accountpojo;
+    private HibernateAccountDAO hibAccountDAO;
 
     public ClientController() {
         this.hibClientDAO = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
         this.clientpojo = new ClientPOJO();
+        this.accountpojo = new AccountPOJO();
+        this.hibAccountDAO = (HibernateAccountDAO) HibernateDaoFactory.getInstance().getDao("account");
     }
 
     public ClientController(ClientDAOInterface clientdao) {
@@ -25,16 +32,29 @@ public class ClientController {
         this.clientpojo = new ClientPOJO();
     }
 
-    public int newClient(String firstname, String lastname, String email) {
+    public void newClient(String firstname, String lastname, String email, int accountID) {
         LOGGER.info("newClient start");
-        clientpojo.setFirstName(firstname);
-        clientpojo.setLastName(lastname);
-        clientpojo.setEMail(email);
-        hibClientDAO.create(clientpojo);
-        hibClientDAO.finalize();
-        LOGGER.info("newClient end");
-        return clientpojo.getClientID();
-
+        try {
+            accountpojo = hibAccountDAO.findById(AccountPOJO.class, accountID);
+            if (accountpojo.getClient() == null) {
+                accountpojo = hibAccountDAO.findById(AccountPOJO.class, accountID);
+                clientpojo.setAccount(accountpojo);
+                clientpojo.setFirstName(firstname);
+                clientpojo.setLastName(lastname);
+                clientpojo.setEMail(email);
+                hibClientDAO.create(clientpojo);
+                accountpojo.setClient(clientpojo);
+                hibAccountDAO.update(clientpojo);
+                hibClientDAO.finalize();
+                System.out.println("New Client added with the ClientID of: " + clientpojo.getClientID());
+                LOGGER.info("newClient end");
+            } else {
+                System.out.println("Account is allready linked with other Client");
+            }
+        } catch (PersistenceException E) {
+            System.out.println("Account must exist");
+        }
+        
     }
 
     public String removeClient(int clientID, String anwser) {

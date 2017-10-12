@@ -10,12 +10,15 @@ import HibernateDao.HibernateAddressDAO;
 import HibernateDao.HibernateClientDAO;
 import Interface.AddressDAOInterface;
 import Interface.ClientDAOInterface;
+import Menu.AddressMenu;
 import POJO.AddressPOJO;
 import POJO.ClientPOJO;
 import POJO.AddressTypePOJO;
 
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -81,7 +84,7 @@ public class AddressController {
         return returnedClients;
     }
 
-    public int newAddress(int houseNumber, String houseNumberAddition, String streetName, String postalCode, String city, int clientID, int addresstypeID) {
+    public void newAddress(int houseNumber, String houseNumberAddition, String streetName, String postalCode, String city, int clientID, int addresstypeID) {
         LOGGER.info("newAddress start");
         try {
             addresspojo.setHouseNumber(houseNumber);
@@ -91,13 +94,14 @@ public class AddressController {
             addresspojo.setCity(city);
             addresspojo.setClient(hibClientDAO.findById(ClientPOJO.class, clientID));
             addresspojo.setAddresstype(hibAddressDAO.findById(AddressTypePOJO.class, addresstypeID));
-        } catch (Exception E) {
-            System.out.println("First create Client and AddressType");
+            hibAddressDAO.create(addresspojo);
+            hibAddressDAO.finalize();
+            System.out.println("Address is added and has ID: " + addresspojo.getAddressID());
+            LOGGER.info("newAddress end");
+        } catch (PersistenceException E) {
+            System.out.println("First add the corresponding Client and AddressType.");
         }
-        hibAddressDAO.create(addresspojo);
-        hibAddressDAO.finalize();
-        LOGGER.info("newAddress end");
-        return addresspojo.getAddressID();
+
     }
 
     public void removeAddress(int ID) {

@@ -63,8 +63,8 @@ public class AddressMongoDao implements AddressDAOInterface {
         document.append("HouseNubmerAddition", address.getHouseNumberAddition());
         document.append("PostalCode", address.getPostalCode());
         document.append("City", address.getCity());
-        document.append("ClientID", address.getClientID());
-        document.append("AddressTypeID", address.getAddressTypeID());
+        document.append("ClientID", address.getClientIdentifier());
+        document.append("AddressTypeID", address.getAddressTypeIdentifier());
         return document;
     }
 
@@ -108,14 +108,14 @@ public class AddressMongoDao implements AddressDAOInterface {
         ClientMongoDao clientMongo = new ClientMongoDao();
         try {
             MongoCollection<Document> collection = mongoConnector.makeConnection().getCollection("client");
-            Document doc = collection.find(eq("id", adress.getClientID())).first();
+            Document doc = collection.find(eq("id", adress.getClientIdentifier())).first();
             ClientPOJO thisClient = clientMongo.convertDocumentToClient(doc);
-            if (thisClient.getClientID() == adress.getClientID()) {
+            if (thisClient.getClientID() == adress.getClientIdentifier()) {
                 try {
                     MongoCollection<Document> collection2 = mongoConnector.makeConnection().getCollection("addressType");
-                    Document doc2 = collection2.find(eq("AddressTypeID", adress.getAddressTypeID())).first();
+                    Document doc2 = collection2.find(eq("AddressTypeID", adress.getAddressTypeIdentifier())).first();
                     AddressTypePOJO thisAddressType = convertDocumentToAddressType(doc2);
-                    if (thisAddressType.getAddressTypeID() == adress.getAddressTypeID()) {
+                    if (thisAddressType.getAddressTypeID() == adress.getAddressTypeIdentifier()) {
                         adress.setAddressID(getNextId());
                         MongoCollection<Document> collection3 = mongoConnector.makeConnection().getCollection("address");
                         collection3.insertOne(convertAddressToDocument(adress));
@@ -250,7 +250,7 @@ public class AddressMongoDao implements AddressDAOInterface {
             MongoCollection<Document> collection = mongoConnector.makeConnection().getCollection("address");
             Document doc = collection.find(eq("AddressTypeID", addressType.getAddressTypeID())).first();
             AddressPOJO thisAddress = convertDocumentToAddress(doc);
-            if (thisAddress.getAddressTypeID() == 0) {
+            if (thisAddress.getAddressTypeIdentifier() == 0) {
                 MongoCollection<Document> collection2 = mongoConnector.makeConnection().getCollection("addressType");
                 collection2.findOneAndDelete(eq("AddressTypeID", addressType.getAddressTypeID()));
             } else {
