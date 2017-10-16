@@ -5,9 +5,12 @@
  */
 package HibernateDao;
 
+import POJO.ClientPOJO;
+import POJO.OrderPOJO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  *
@@ -22,9 +25,29 @@ public class HibernateOrderDAO extends GenericDAO {
         super(em);
     }
 
-    @Override
-    public <T> List<T> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+   @Override
+    public List<OrderPOJO> getAll() {
+       LOGGER.info("getAllOrder Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM OrderPOJO");
+        List<OrderPOJO> orders = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAllOrder End");
+        return orders;
     }
     
+     public List<OrderPOJO> getOrderWithClient(int clientID) {
+        LOGGER.info("getOrderWithClient Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM OrderPOJO WHERE ClientID = :id");
+        query.setParameter("id", clientID);
+        List<OrderPOJO> orders = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getOrderWithClient end");
+        return orders;
+    } 
+     
+     
+     
 }

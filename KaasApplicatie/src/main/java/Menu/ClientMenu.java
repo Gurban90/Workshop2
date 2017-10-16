@@ -229,7 +229,7 @@ public class ClientMenu {
             System.out.println("ClientID must be an integer and between 1 and 1000.");
             clientMenu();
         }
-        System.out.println("Are You Sure you want to remove clientID: " + clientID + "  enter Yes ");
+        System.out.println("Are You Sure you want to remove this client and its address(es)? enter Yes ");
         anwser = input.nextLine();
         if (validator.stringValidator(anwser)) {
             controller.removeClient(clientID, anwser);

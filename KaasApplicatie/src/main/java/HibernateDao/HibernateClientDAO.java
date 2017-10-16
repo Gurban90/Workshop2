@@ -24,6 +24,7 @@ public class HibernateClientDAO extends GenericDAO {
         super(em);
     }
 
+
     @Override
     public List<ClientPOJO> getAll() {
         LOGGER.info("getAllClient Start");

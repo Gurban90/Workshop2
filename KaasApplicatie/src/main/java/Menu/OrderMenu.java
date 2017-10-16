@@ -43,14 +43,12 @@ public class OrderMenu {
     private int minint;
     private HelpClientOrderCheese collection;
     private LocalDateTime returnedLocalDateTime;
-    private DomXML data;
     private OrderController orderController;
     private Validator validator;
 
     public void orderMenu() {
 
-        data = new DomXML();
-        orderController = new OrderController(DaoFactory.createOrderDao(data.getDatabaseType()), DaoFactory.createOrderDetailDao(data.getDatabaseType()));
+        orderController = new OrderController();
         validator = new Validator();
         input = new Scanner(System.in);
 
@@ -310,12 +308,6 @@ public class OrderMenu {
             cheeseID = input.nextLine();
             if (validator.idValidator(this.cheeseID)) {
                 this.cheeseIDint = Integer.parseInt(this.cheeseID);
-                IDCheck idCheck = new IDCheck();
-                Boolean boo = idCheck.checkCheeseID(cheeseIDint);
-                if (boo) {
-                    System.out.println("No cheese with this id found.");
-                    orderMenu();
-                }
             } else {
                 System.out.println("CheeseID must have a value. ");
                 orderMenu();
@@ -504,7 +496,7 @@ public class OrderMenu {
             System.out.println("OrderDetail must have a value. ");
             editOrderMenu();
         }
-        System.out.println(orderController.searchOrderDetail(orderDetailIDint));
+        System.out.println(orderController.searchOrderDetailWithOrder(orderDetailIDint));
 
         orderMenu();
         logger.info("searchorderdetail end");

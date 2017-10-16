@@ -15,8 +15,7 @@ public class CheeseMenu {
 
     private Scanner input;
     private int choice;
-    private DomXML data;
-    private CheeseController controller;
+       private CheeseController controller;
     private int id;
     private String name;
     private BigDecimal price;
@@ -30,9 +29,8 @@ public class CheeseMenu {
 
         LOGGER.info("CheeseMenu start");
 
-        data = new DomXML();
         input = new Scanner(System.in);
-        controller = new CheeseController(DaoFactory.createCheeseDao(data.getDatabaseType()));
+        controller = new CheeseController();
         validator = new Validator();
 
         System.out.print(" Cheese menu: " + "\n"
@@ -190,8 +188,8 @@ public class CheeseMenu {
         System.out.print("CheeseName please: ");
         this.name = input.nextLine();
         if (validator.stringValidator(this.name)) {
-            CheesePOJO returnedcheese2 = controller.findCheeseWithName(name);
-            System.out.println(returnedcheese2);
+            List<CheesePOJO> returnedcheeses = controller.findCheeseWithName(name);
+            System.out.println(returnedcheeses);
             cheeseMenu();
         } else {
             System.out.println("CheeseName cannot be empty.");

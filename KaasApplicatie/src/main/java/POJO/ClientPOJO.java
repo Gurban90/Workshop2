@@ -33,10 +33,13 @@ public class ClientPOJO {
     private String eMail;
 
     @OneToMany(mappedBy = "client")
-    List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
+    private List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
 
     @OneToOne(mappedBy = "client")
     private AccountPOJO account;
+    
+    @OneToMany(mappedBy = "client")
+    private List<OrderPOJO> orders = new ArrayList<OrderPOJO>();
 
     public ClientPOJO() {
     }
@@ -48,6 +51,16 @@ public class ClientPOJO {
         this.eMail = eMail;
     }
 
+    public List<OrderPOJO> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderPOJO> orders) {
+        this.orders = orders;
+    }
+
+    
+    
     public AccountPOJO getAccount() {
         return account;
     }

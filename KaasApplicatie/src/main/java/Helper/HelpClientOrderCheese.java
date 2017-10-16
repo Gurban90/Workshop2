@@ -8,6 +8,8 @@ package Helper;
 import Controller.CheeseController;
 import Controller.OrderController;
 import DatabaseConnector.DomXML;
+import HibernateDao.HibernateOrderDAO;
+import HibernateDao.HibernateOrderDetailDAO;
 import Interface.OrderDAOInterface;
 import Interface.OrderDetailDAOInterface;
 import POJO.CheesePOJO;
@@ -84,8 +86,8 @@ public class HelpClientOrderCheese {
 
     public void getOrder(int clientIDint) {
 
-        orderController = new OrderController(DaoFactory.createOrderDao(data.getDatabaseType()), DaoFactory.createOrderDetailDao(data.getDatabaseType()));
-        this.orderID = orderController.setOrder(orderDate, zeroTotalPrice, processedDate, clientIDint);
+        orderController = new OrderController();
+        this.orderID = orderController.addOrder(orderDate, zeroTotalPrice, processedDate, clientIDint);
     }
 
     public void setOrderDetail(int cheeseID, int ammountCheese) {
@@ -94,7 +96,7 @@ public class HelpClientOrderCheese {
     }
 
     public void getSingleCheesePrice() {
-        CheeseController cheeseController = new CheeseController(DaoFactory.createCheeseDao(data.getDatabaseType()));
+        CheeseController cheeseController = new CheeseController();
 
         returnedCheesePOJO = new CheesePOJO();
         returnedCheesePOJO = cheeseController.findCheese(cheeseID);
@@ -103,9 +105,9 @@ public class HelpClientOrderCheese {
 
     public void getOrderDetail() {
 
-        orderController = new OrderController(DaoFactory.createOrderDao(data.getDatabaseType()), DaoFactory.createOrderDetailDao(data.getDatabaseType()));
+        orderController = new OrderController();
 
-        orderController.setOrderDetail(ammountCheese, orderID, cheeseID);
+        orderController.addOrderDetail(ammountCheese, orderID, cheeseID);
     }
 
     public BigDecimal addUpCheese() {
@@ -119,11 +121,9 @@ public class HelpClientOrderCheese {
     }
 
     public String saveTotalPrice() {
+        HibernateOrderDAO orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        returnedOrderPOJO = orderDAO.findById(OrderPOJO.class, orderID);
 
-        OrderPOJO orderPOJO = new OrderPOJO();
-        OrderDAOInterface orderDAO = DaoFactory.createOrderDao(data.getDatabaseType());
-        orderPOJO.setOrderID(orderID);
-        returnedOrderPOJO = orderDAO.getOrder(orderPOJO);
         if (returnedOrderPOJO.getTotalPrice() == new BigDecimal(0)) {
         } else {
             returnedOrderPOJO.setTotalPrice(returnedOrderPOJO.getTotalPrice());
@@ -131,25 +131,18 @@ public class HelpClientOrderCheese {
         BigDecimal price = returnedOrderPOJO.getTotalPrice();
         price = price.add(totalPrice);
         returnedOrderPOJO.setTotalPrice(price);
-        orderDAO.updateOrder(returnedOrderPOJO);
-
-        return "total price updated";
-
+        orderDAO.update(returnedOrderPOJO);
+        return "Total price updated";
     }
 
     public String minusCheese(int orderDetailId, int orderId, boolean edit) {
-        OrderDetailPOJO orderdetail = new OrderDetailPOJO();
-        OrderPOJO order = new OrderPOJO();
+        HibernateOrderDAO orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        HibernateOrderDetailDAO orderDetailDAO = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
+        CheeseController cheesecontrol = new CheeseController();
 
-        orderdetail.setOrderDetailID(orderDetailId);
-        order.setOrderID(orderId);
-
-        OrderDAOInterface orderDAO = DaoFactory.createOrderDao(data.getDatabaseType());
-        OrderDetailDAOInterface orderDetailDAO = DaoFactory.createOrderDetailDao(data.getDatabaseType());
-        CheeseController cheesecontrol = new CheeseController(DaoFactory.createCheeseDao(data.getDatabaseType()));
-
-        OrderDetailPOJO returnOrderDetail = orderDetailDAO.getOrderDetailWithID(orderdetail);
-        OrderPOJO returnorder = orderDAO.getOrder(order);
+        OrderDetailPOJO returnOrderDetail = orderDetailDAO.findById(OrderDetailPOJO.class, orderDetailId);
+        OrderPOJO returnorder = orderDAO.findById(OrderPOJO.class, orderId);
+       
         if (edit) {
             BigDecimal overallPrice = returnorder.getTotalPrice();
             BigDecimal quantity = new BigDecimal(returnOrderDetail.getQuantity());
@@ -159,7 +152,7 @@ public class HelpClientOrderCheese {
             overallPrice = overallPrice.add(price.multiply(quantity));
 
             returnorder.setTotalPrice(overallPrice);
-            orderDAO.updateOrder(returnorder);
+            orderDAO.update(returnorder);
 
         } else {
             BigDecimal overallPrice = returnorder.getTotalPrice();
@@ -170,7 +163,7 @@ public class HelpClientOrderCheese {
             overallPrice = overallPrice.subtract(price.multiply(quantity));
 
             returnorder.setTotalPrice(overallPrice);
-            orderDAO.updateOrder(returnorder);
+            orderDAO.update(returnorder);
         }
 
         return "Total price updated";
@@ -182,22 +175,23 @@ public class HelpClientOrderCheese {
         int oldStock = 0;
         int newStock = 0;
 
-        cheeseController = new CheeseController(DaoFactory.createCheeseDao(data.getDatabaseType()));
+        cheeseController = new CheeseController();
 
         CheesePOJO x = cheeseController.findCheese(cheeseID);
-
+                
         oldStock = x.getStock();
 
         if (oldStock - ammountCheese >= 0) {
             newStock = oldStock - ammountCheese;
+            cheeseController = new CheeseController();
             cheeseController.editCheeseStock(cheeseID, newStock);
-            return "stock altered ";
+            return "Stock altered ";
 
         } else if (oldStock - ammountCheese < 0) {
             newStock = oldStock - ammountCheese;
             cheeseController.editCheeseStock(cheeseID, newStock);
             return " Not enough stock, order still placed, Stock is now negative ";
-        
+
         } else if (oldStock <= 0) {
             return "Nothing in stock (maybe you can place something like a validator to prevent people from ordering?) ";
 

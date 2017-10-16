@@ -6,6 +6,8 @@
 package Helper;
 
 import DatabaseConnector.DomXML;
+import HibernateDao.HibernateCheeseDAO;
+import HibernateDao.HibernateClientDAO;
 import Interface.CheeseDAOInterface;
 import Interface.ClientDAOInterface;
 import POJO.CheesePOJO;
@@ -22,9 +24,10 @@ public class IDCheck {
 
     public boolean checkCheeseID(int sendID) {
 
-        CheeseDAOInterface DAO = DaoFactory.createCheeseDao(data.getDatabaseType());
+        HibernateCheeseDAO Dao = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
+        
 
-        List<CheesePOJO> list = DAO.getAllCheese();
+        List<CheesePOJO> list = Dao.getAll();
         for (CheesePOJO idsearch : list) {
             int returnedid = idsearch.getCheeseID();
 
@@ -37,9 +40,9 @@ public class IDCheck {
 
     public boolean checkClientID(int sendID) {
 
-        ClientDAOInterface DAO = DaoFactory.createClientDao(data.getDatabaseType());
+        HibernateClientDAO Dao = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
 
-        List<ClientPOJO> list = DAO.getAllClient();
+        List<ClientPOJO> list = Dao.getAll();
         for (ClientPOJO idsearch : list) {
             int returnedid = idsearch.getClientID();
 

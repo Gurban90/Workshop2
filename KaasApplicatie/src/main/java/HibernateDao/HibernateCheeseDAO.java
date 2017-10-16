@@ -5,9 +5,11 @@
  */
 package HibernateDao;
 
+import POJO.CheesePOJO;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  *
@@ -24,8 +26,25 @@ public class HibernateCheeseDAO extends GenericDAO {
 
 
     @Override
-    public <T> List<T> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<CheesePOJO> getAll() {
+       LOGGER.info("getAllCheese Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM CheesePOJO");
+        List<CheesePOJO> cheeses = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAllCheese End");
+        return cheeses;
+    }
+    
+    public List<CheesePOJO> getCheeseWithName(String name) {
+        LOGGER.info("getCheeseWithName Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM CheesePOJO WHERE cheesename = :name");
+        query.setParameter("name", name);
+        List<CheesePOJO> cheeses = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getCheeseWithName end");
+        return cheeses;
     }
     
 }

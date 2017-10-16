@@ -65,6 +65,8 @@ public class AddressTypeController {
         hibAddressDAO.finalize();
         LOGGER.info("removeAddressType end");
     }
+    
+   
 
     public String editAddressType(int id, String addressType) {
         LOGGER.info("editAddressType start");

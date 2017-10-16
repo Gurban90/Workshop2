@@ -5,18 +5,40 @@
  */
 package POJO;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  *
  * @author Gerben
  */
-
+@Entity
+@Table(name = "OrderDetail")
 public class OrderDetailPOJO {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderDetailID;
+
+    @ManyToOne
+    @JoinColumn(name = "CheeseID", referencedColumnName = "cheeseID")
     private CheesePOJO cheese;
+
+    @Transient
     private int cheeseID;
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "OrderID", referencedColumnName = "orderID")
     private OrderPOJO order;
+
+    @Transient
     private int orderID;
 
     public OrderDetailPOJO() {
@@ -29,7 +51,7 @@ public class OrderDetailPOJO {
         this.orderID = orderID;
 
     }
-
+    
     public int getOrderDetailID() {
         return orderDetailID;
     }
@@ -77,6 +99,7 @@ public class OrderDetailPOJO {
     public void setOrderID(int orderID) {
         this.orderID = orderID;
     }
+
     @Override
     public String toString() {
         return "OrderDetailID: " + orderDetailID + ", Quantity: " + quantity + ", CheeseID: " + cheeseID + ", OrderID: " + orderID;

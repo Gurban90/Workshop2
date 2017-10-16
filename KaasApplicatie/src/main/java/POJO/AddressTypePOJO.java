@@ -20,7 +20,7 @@ public class AddressTypePOJO {
     private String addressType;
 
     @OneToMany(mappedBy = "addresstype")
-    List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
+    private List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
 
     public AddressTypePOJO(){};
 

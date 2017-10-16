@@ -1,23 +1,43 @@
 package Controller;
 
+import Helper.HibernateDaoFactory;
+import HibernateDao.HibernateCheeseDAO;
+import HibernateDao.HibernateClientDAO;
+import HibernateDao.HibernateOrderDAO;
+import HibernateDao.HibernateOrderDetailDAO;
 import Interface.OrderDAOInterface;
 import Interface.OrderDetailDAOInterface;
+import POJO.CheesePOJO;
+import POJO.ClientPOJO;
 import POJO.OrderDetailPOJO;
 import POJO.OrderPOJO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
 
 public class OrderController {
 
     private Logger LOGGER = Logger.getLogger(AccountController.class.getName());
-    private Integer orderID;
-    private Integer orderDetailID;
     private OrderDAOInterface orderdao;
     private OrderPOJO orderpojo;
     private OrderDetailPOJO orderdetailpojo;
     private OrderDetailDAOInterface orderdetaildao;
+    private HibernateOrderDAO hibOrderDAO;
+    private HibernateOrderDetailDAO hibOrderDetailDAO;
+    private HibernateCheeseDAO hibCheeseDAO;
+    private HibernateClientDAO hibClientDAO;
+
+    public OrderController() {
+        this.hibOrderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        this.orderpojo = new OrderPOJO();
+        this.orderdetailpojo = new OrderDetailPOJO();
+        this.hibOrderDetailDAO = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
+        this.hibCheeseDAO = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
+        this.hibClientDAO = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
+
+    }
 
     public OrderController(OrderDAOInterface orderdao, OrderDetailDAOInterface orderdetaildao) {
         this.orderdao = orderdao;
@@ -26,99 +46,112 @@ public class OrderController {
         this.orderdetaildao = orderdetaildao;
     }
 
-    public Integer setOrder(LocalDateTime orderDate, BigDecimal totalPrice, LocalDateTime processedDate, int ClientID) {
+    public Integer addOrder(LocalDateTime orderDate, BigDecimal totalPrice, LocalDateTime processedDate, int ClientID) {
         LOGGER.info("start");
         orderpojo.setOrderDate(orderDate);
         orderpojo.setProcessedDate(processedDate);
         orderpojo.setTotalPrice(totalPrice);
-        orderpojo.setClientID(ClientID);
-        orderID = orderdao.addOrder(orderpojo);
+        orderpojo.setClient(hibClientDAO.findById(ClientPOJO.class, ClientID));
+        hibOrderDAO.create(orderpojo);
         LOGGER.info("end");
-        return orderID;
+        return orderpojo.getOrderID();
     }
 
-    public Integer setOrderDetail(int quantity, int orderID, int cheeseID) {
+    public void addOrderDetail(int quantity, int orderID, int cheeseID) {
         LOGGER.info("setOrderDetail start");
-        orderdetailpojo.setQuantity(quantity);
-        orderdetailpojo.setOrderID(orderID);
-        orderdetailpojo.setCheeseID(cheeseID);
-
-        orderDetailID = orderdetaildao.addOrderDetail(orderdetailpojo);
-        LOGGER.info("setorderdetail end");
-        return orderDetailID;
+        try {
+            orderdetailpojo.setQuantity(quantity);
+            orderdetailpojo.setOrder(hibOrderDAO.findById(OrderPOJO.class, orderID));
+            orderdetailpojo.setCheese(hibCheeseDAO.findById(CheesePOJO.class, cheeseID));
+            hibOrderDetailDAO.create(orderdetailpojo);
+            hibOrderDetailDAO.finalize();
+            System.out.println("OrderDetail is added and has ID: " + orderdetailpojo.getOrderDetailID());
+            LOGGER.info("setorderdetail end");
+        } catch (PersistenceException E) {
+            System.out.println("First add the Order and Cheese.");
+        }
     }
 
     public String removeOrder(int orderID) {
         LOGGER.info("start");
-        orderpojo.setOrderID(orderID);
-        orderdao.deleteOrder(orderpojo);
+        hibOrderDAO.delete(OrderPOJO.class, orderID);
+        hibOrderDAO.finalize();
         LOGGER.info("end");
-        return "order removed. ";
+        return "order removed.";
     }
 
     public String removeOrderDetail(int orderDetailID) {
         LOGGER.info("start");
-        orderdetailpojo.setOrderDetailID(orderDetailID);
-        orderdetaildao.deleteOrderDetail(orderdetailpojo);
+        hibOrderDetailDAO.delete(OrderDetailPOJO.class, orderDetailID);
+        hibOrderDetailDAO.finalize();
         LOGGER.info("end");
-        return "orderDetail removed. ";
+        return "orderDetail removed.";
     }
 
-    public List<OrderDetailPOJO> searchOrderDetail(int orderID) {
+    public List<OrderDetailPOJO> searchOrderDetailWithOrder(int orderID) {
         LOGGER.info("start");
-        orderdetailpojo.setOrderID(orderID);
-        List<OrderDetailPOJO> returnedOrderDetail = orderdetaildao.getOrderDetail(orderdetailpojo);
+        List<OrderDetailPOJO> returnedOrderDetail = hibOrderDetailDAO.getWithOrder(orderID);
+        hibOrderDetailDAO.finalize();
         LOGGER.info("end");
         return returnedOrderDetail;
     }
 
     public List<OrderPOJO> getAllOrders() {
-        return orderdao.getAllOrder();
+        LOGGER.info("start");
+        List<OrderPOJO> returnedOrders = hibOrderDAO.getAll();
+        hibOrderDAO.finalize();
+        LOGGER.info("end");
+        return returnedOrders;
     }
 
     public OrderPOJO searchOrder(int orderID) {
         LOGGER.info("start");
-        orderpojo.setOrderID(orderID);
-        OrderPOJO returnedOrder = orderdao.getOrder(orderpojo);
+        OrderPOJO returnedOrder = hibOrderDAO.findById(OrderPOJO.class, orderID);
+        hibOrderDAO.finalize();
         LOGGER.info("end");
         return returnedOrder;
-
     }
 
     public void editOrderTime(int orderID, LocalDateTime x) {
         LOGGER.info("start");
-        orderpojo.setOrderID(orderID);
-        orderpojo = orderdao.getOrder(orderpojo);
+        orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
         orderpojo.setOrderDate(x);
-        orderdao.updateOrder(orderpojo);
+        hibOrderDAO.update(orderpojo);
+        hibOrderDAO.finalize();
         LOGGER.info("end");
     }
 
     public void editOrderDeliverTime(int orderID, LocalDateTime x) {
-        orderpojo.setOrderID(orderID);
-        orderpojo = orderdao.getOrder(orderpojo);
+        LOGGER.info("start");
+        orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
         orderpojo.setProcessedDate(x);
-        orderdao.updateOrder(orderpojo);
+        hibOrderDAO.update(orderpojo);
+        hibOrderDAO.finalize();
+        LOGGER.info("end");
     }
 
     public String editOrderDetailCheese(int orderDetailID, int cheeseID) {
         LOGGER.info("start");
-        orderdetailpojo.setOrderDetailID(orderDetailID);
-        orderdetailpojo = orderdetaildao.getOrderDetailWithID(orderdetailpojo);
-        orderdetailpojo.setCheeseID(cheeseID);
-        orderdetaildao.updateOrderDetail(orderdetailpojo);
-        LOGGER.info("end");
-        return "orderdetail cheese editted";
+        try {
+            orderdetailpojo = hibOrderDetailDAO.findById(OrderDetailPOJO.class, orderDetailID);
+            orderdetailpojo.setCheese(hibCheeseDAO.findById(CheesePOJO.class, cheeseID));
+            hibOrderDetailDAO.update(orderpojo);
+            hibOrderDetailDAO.finalize();
+            LOGGER.info("end");
+            return "Orderdetail cheese editted.";
+        } catch (PersistenceException E) {
+            return "Has to be an existing Cheese.";
+        }
     }
 
     public String editOrderDetailAmmount(int orderDetailID, int cheeseAmmount) {
         LOGGER.info("start");
-        orderdetailpojo.setOrderDetailID(orderDetailID);
-        orderdetailpojo = orderdetaildao.getOrderDetailWithID(orderdetailpojo);
+        orderdetailpojo = hibOrderDetailDAO.findById(OrderDetailPOJO.class, orderDetailID);
         orderdetailpojo.setQuantity(cheeseAmmount);
-        orderdetaildao.updateOrderDetail(orderdetailpojo);
+        hibOrderDetailDAO.update(orderpojo);
+        hibOrderDetailDAO.finalize();
         LOGGER.info("end");
-        return "orderdetailammount eddited";
+        return "Orderdetail ammount eddited.";
     }
 
 }

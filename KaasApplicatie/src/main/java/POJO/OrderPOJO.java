@@ -2,17 +2,40 @@ package POJO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = "Orders")
 public class OrderPOJO {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderID;
-    private ClientPOJO client; //id is first input
-    private LocalDateTime orderDate; //when it is ordered (now time)
-    private LocalDateTime processedDate; //when the order is finished and send to client
 
+    @ManyToOne
+    @JoinColumn(name = "ClientID", referencedColumnName = "clientID")
+    private ClientPOJO client;
+
+    private LocalDateTime orderDate;
+    private LocalDateTime processedDate;
+    private BigDecimal totalPrice;
+
+    @Transient
     private int clientID;
-    private OrderDetailPOJO orderDetail; //zero
-    private BigDecimal totalPrice; //zero
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetailPOJO> orderDetails = new ArrayList<OrderDetailPOJO>();
 
     public OrderPOJO() {
     }
@@ -34,12 +57,12 @@ public class OrderPOJO {
         this.orderID = orderID;
     }
 
-    public OrderDetailPOJO getOrderDetail() {
-        return orderDetail;
+    public List<OrderDetailPOJO> getOrderDetails() {
+        return orderDetails;
     }
 
-    public void setOrderDetail(OrderDetailPOJO orderDetail) {
-        this.orderDetail = orderDetail;
+    public void setOrderDetails(List<OrderDetailPOJO> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 
     public ClientPOJO getClient() {

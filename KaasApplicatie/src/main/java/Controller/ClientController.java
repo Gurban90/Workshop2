@@ -54,14 +54,13 @@ public class ClientController {
         } catch (PersistenceException E) {
             System.out.println("Account must exist");
         }
-        
+
     }
 
     public String removeClient(int clientID, String anwser) {
         LOGGER.info("removeClient start");
         if (anwser.equals("Y") || anwser.equals("Yes") || anwser.equals("y") || anwser.equals("yes")) {
             hibClientDAO.delete(ClientPOJO.class, clientID);
-            clientdao.deleteClient(clientpojo);
             hibClientDAO.finalize();
             LOGGER.info("removeClient end");
             return "client removed";
