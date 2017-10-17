@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class OrderPOJO {
     @Transient
     private int clientID;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailPOJO> orderDetails = new ArrayList<OrderDetailPOJO>();
 
     public OrderPOJO() {
@@ -107,7 +108,8 @@ public class OrderPOJO {
 
     @Override
     public String toString() {
-        return "OrderID: " + orderID + ", OrderDate: " + orderDate + ", TotalPrice: " + totalPrice + ", ProcessedDate: " + processedDate + ", ClientID " + clientID;
+        return "OrderID: " + orderID + ", OrderDate: " + orderDate + ", TotalPrice: " + totalPrice + ", ProcessedDate: " + processedDate + ", Client " + client.getClientID()+ 
+                "\n" + ", OrderDetails: " + orderDetails;
     }
 
 }

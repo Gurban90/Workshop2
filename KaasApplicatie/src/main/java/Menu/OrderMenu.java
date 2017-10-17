@@ -1,5 +1,6 @@
 package Menu;
 
+import Controller.MenuController;
 import Controller.OrderController;
 import DatabaseConnector.DomXML;
 import Helper.DaoFactory;
@@ -94,7 +95,7 @@ public class OrderMenu {
                     break;
                 case 8:
                     logger.info("searchallorder start");
-                    System.out.println(orderController.getAllOrders());
+                    orderController.getAllOrders();
                     orderMenu();
                     logger.info("searchallorder end");
                     break;
@@ -103,8 +104,8 @@ public class OrderMenu {
                     break;
                 case 10:
                     logger.info("Open mainMenu");
-                    MainMenu mainmenu = new MainMenu();
-                    mainmenu.mainMenu();
+                    MenuController menu = new MenuController();
+                    menu.goToMain();
                     break;
                 default:
                     System.out.println("Wrong number, try again.");
@@ -478,10 +479,7 @@ public class OrderMenu {
             System.out.println("OrderID must have a value.");
             orderMenu();
         }
-        OrderPOJO returnedOrder = orderController.searchOrder(orderIDint);
-
-        System.out.println(returnedOrder);
-
+        orderController.searchOrder(orderIDint);
         orderMenu();
         logger.info("searchorder end");
     }
@@ -496,8 +494,7 @@ public class OrderMenu {
             System.out.println("OrderDetail must have a value. ");
             editOrderMenu();
         }
-        System.out.println(orderController.searchOrderDetailWithOrder(orderDetailIDint));
-
+        orderController.searchOrderDetailWithOrder(orderDetailIDint);
         orderMenu();
         logger.info("searchorderdetail end");
     }

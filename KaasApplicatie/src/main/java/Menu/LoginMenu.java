@@ -6,6 +6,7 @@
 package Menu;
 
 import Controller.AccountController;
+import Controller.MenuController;
 import Helper.TokenCreator;
 import Helper.Validator;
 import POJO.AccountPOJO;
@@ -29,7 +30,6 @@ public class LoginMenu {
     private int status;
     private String accountIdString;
     private String accounStatusString;
-
     private AccountController controller;
     private Validator validator;
     private TokenCreator token;
@@ -55,7 +55,6 @@ public class LoginMenu {
 
         String choiceNumber = input.nextLine();
         if (validator.menuValidator(choiceNumber)) {
-
             choice = Integer.parseInt(choiceNumber);
 
             switch (choice) {
@@ -292,7 +291,7 @@ public class LoginMenu {
         System.out.print("Insert new AccountName: ");
         this.name = input.nextLine();
         if (validator.stringValidator(this.name)) {
-            System.out.println(controller.editAccountName(id, name));
+            controller.editAccountName(id, name);
             loginMenu();
         } else {
             System.out.println("Name must have a value.");
@@ -378,8 +377,8 @@ public class LoginMenu {
 
     private void goToMain() {
         if (token.checkJWT()) {
-            MainMenu mainmenu = new MainMenu();
-            mainmenu.mainMenu();
+            MenuController menu = new MenuController();
+            menu.goToMain();
         } else {
             System.out.println("Please log in first.");
             loginMenu();

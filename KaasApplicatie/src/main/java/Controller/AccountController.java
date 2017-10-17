@@ -87,65 +87,86 @@ public class AccountController {
 
     public boolean removeAccount(int id, String password) {
         LOGGER.info("removeAccount start");
-        AccountPOJO foundAccount = hibAccountDAO.findById(AccountPOJO.class, id);
-        salt = foundAccount.getAccountPassword().substring(32);
-        hashedPassword = passwordhasher.hasher(password + salt);
-        totalPassword = hashedPassword + salt;
-        accountpojo.setAccountPassword(totalPassword);
+        try {
+            AccountPOJO foundAccount = hibAccountDAO.findById(AccountPOJO.class, id);
+            salt = foundAccount.getAccountPassword().substring(32);
+            hashedPassword = passwordhasher.hasher(password + salt);
+            totalPassword = hashedPassword + salt;
+            accountpojo.setAccountPassword(totalPassword);
 
-        if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
-            hibAccountDAO.delete(AccountPOJO.class, id);
-            hibAccountDAO.finalize();
-            LOGGER.info("removeAccount end");
-            return true;
-        } else {
-            LOGGER.info("removeAccount end");
-            hibAccountDAO.finalize();
+            if (accountpojo.getAccountPassword().equals(foundAccount.getAccountPassword())) {
+                hibAccountDAO.delete(AccountPOJO.class, id);
+                hibAccountDAO.finalize();
+                LOGGER.info("removeAccount end");
+                return true;
+            } else {
+                LOGGER.info("removeAccount end");
+                hibAccountDAO.finalize();
+                return false;
+            }
+        } catch (Exception E) {
+            System.out.println("Has to be an existing Account.");
             return false;
         }
     }
 
     public String updateAccount(int id, String name, String password, int status) {
         LOGGER.info("updateAccount start");
-        accountpojo.setAccountID(id);
-        accountpojo.setAccountName(name);
-        accountpojo.setAccountPassword(password);
-        accountpojo.setAccountStatus(status);
-        hibAccountDAO.update(accountpojo);
-        hibAccountDAO.finalize();
-        LOGGER.info("updateAccount end");
-        return "Account has been updated.";
+        try {
+            accountpojo.setAccountID(id);
+            accountpojo.setAccountName(name);
+            accountpojo.setAccountPassword(password);
+            accountpojo.setAccountStatus(status);
+            hibAccountDAO.update(accountpojo);
+            hibAccountDAO.finalize();
+            LOGGER.info("updateAccount end");
+            return "Account has been updated.";
+        } catch (Exception E) {
+            return "Account not found.";
+        }
     }
 
-    public String editAccountName(int id, String name) {
+    public void editAccountName(int id, String name) {
         LOGGER.info("editAccountName start");
-        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
-        accountpojo2.setAccountName(name);
-        hibAccountDAO.update(accountpojo2);
-        hibAccountDAO.finalize();
-        LOGGER.info("editAccountName end");
-        return "Account has been updated.";
+        try {
+            AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
+            accountpojo2.setAccountName(name);
+            hibAccountDAO.update(accountpojo2);
+            hibAccountDAO.finalize();
+            LOGGER.info("editAccountName end");
+            System.out.println("Account has been updated.");
+        } catch (Exception E) {
+            System.out.println("Account not found.");
+        }
     }
 
     public String editAccountPassword(int id, String password) {
         LOGGER.info("editAccountPassword start");
-        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
-        saltedHashedPassword = passwordhasher.makeSaltedPasswordHash(password);
-        accountpojo2.setAccountPassword(saltedHashedPassword);
-        hibAccountDAO.update(accountpojo2);
-        hibAccountDAO.finalize();
-        LOGGER.info("editAccountPassword end");
-        return "Account has been updated.";
+        try {
+            AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
+            saltedHashedPassword = passwordhasher.makeSaltedPasswordHash(password);
+            accountpojo2.setAccountPassword(saltedHashedPassword);
+            hibAccountDAO.update(accountpojo2);
+            hibAccountDAO.finalize();
+            LOGGER.info("editAccountPassword end");
+            return "Account has been updated.";
+        } catch (Exception E) {
+            return "Account not found.";
+        }
     }
 
     public String editAccountStatus(int id, int status) {
         LOGGER.info("editAccountStatus start");
-        AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
-        accountpojo2.setAccountStatus(status);
-        hibAccountDAO.update(accountpojo2);
-        hibAccountDAO.finalize();
-        LOGGER.info("editAccountStatus end");
-        return "Account has been updated.";
+        try {
+            AccountPOJO accountpojo2 = hibAccountDAO.findById(AccountPOJO.class, id);
+            accountpojo2.setAccountStatus(status);
+            hibAccountDAO.update(accountpojo2);
+            hibAccountDAO.finalize();
+            LOGGER.info("editAccountStatus end");
+            return "Account has been updated.";
+        } catch (Exception E) {
+            return "Account not found.";
+        }
     }
 
     public AccountPOJO findAccount(int findId) {

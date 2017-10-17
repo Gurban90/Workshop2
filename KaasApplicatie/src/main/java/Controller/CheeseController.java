@@ -7,8 +7,10 @@ package Controller;
 
 import Dao.CheeseDAO;
 import Helper.HibernateDaoFactory;
+import Helper.IDCheck;
 import HibernateDao.HibernateCheeseDAO;
 import Interface.CheeseDAOInterface;
+import Menu.CheeseMenu;
 import POJO.CheesePOJO;
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,6 +39,7 @@ public class CheeseController {
         this.cheesePOJO = new CheesePOJO();
     }
 
+    
     public List<CheesePOJO> findAllCheese() {
         LOGGER.info("FindallCheese start");
         List<CheesePOJO> cheeses = hibCheeseDAO.getAll();
@@ -74,51 +77,76 @@ public class CheeseController {
 
     public void removeCheese(int ID) {
         LOGGER.info("removeCheese start");
-        hibCheeseDAO.delete(CheesePOJO.class, ID);
-        cheesedao.deleteCheese(cheesePOJO);
-        hibCheeseDAO.finalize();
+        IDCheck check = new IDCheck();
+        if (check.checkCheeseOrder(ID)) {
+            System.out.println("Cheese is being ordered.");
+            return;
+        }
+        try {
+            hibCheeseDAO.delete(CheesePOJO.class, ID);
+            hibCheeseDAO.finalize();
+            System.out.println("Cheese with ID " + ID + " is removed.");
+        } catch (Exception E) {
+            System.out.println("Has to be an existing Cheese.");
+        }
         LOGGER.info("removeCheese end");
     }
 
     public String editCheese(int id, String name, BigDecimal price, int stock) {
         LOGGER.info("editCheese start");
-        cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
-        cheesePOJO.setCheeseName(name);
-        cheesePOJO.setPrice(price);
-        cheesePOJO.setStock(stock);
-        hibCheeseDAO.update(cheesePOJO);
-        hibCheeseDAO.finalize();
-        LOGGER.info("editCheese end");
-        return "Cheese has been edited.";
+        try {
+            cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
+            cheesePOJO.setCheeseName(name);
+            cheesePOJO.setPrice(price);
+            cheesePOJO.setStock(stock);
+            hibCheeseDAO.update(cheesePOJO);
+            hibCheeseDAO.finalize();
+            LOGGER.info("editCheese end");
+            return "Cheese has been edited.";
+        } catch (Exception E) {
+            return "Cheese not found.";
+        }
     }
 
     public String editCheeseName(int id, String name) {
         LOGGER.info("editCheeseName start");
-        cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
-        cheesePOJO.setCheeseName(name);
-        hibCheeseDAO.update(cheesePOJO);
-        hibCheeseDAO.finalize();
-        LOGGER.info("editCheeseName end");
-        return "Cheese has been edited.";
+        try {
+            cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
+            cheesePOJO.setCheeseName(name);
+            hibCheeseDAO.update(cheesePOJO);
+            hibCheeseDAO.finalize();
+            LOGGER.info("editCheeseName end");
+            return "Cheese has been edited.";
+        } catch (Exception E) {
+            return "Cheese not found.";
+        }
     }
 
     public String editCheesePrice(int id, BigDecimal price) {
         LOGGER.info("editCheesePrice start");
-        cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
-        cheesePOJO.setPrice(price);
-        hibCheeseDAO.update(cheesePOJO);
-        hibCheeseDAO.finalize();
-        LOGGER.info("editCheesePrice end");
-        return "Cheese has been edited.";
+        try {
+            cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
+            cheesePOJO.setPrice(price);
+            hibCheeseDAO.update(cheesePOJO);
+            hibCheeseDAO.finalize();
+            LOGGER.info("editCheesePrice end");
+            return "Cheese has been edited.";
+        } catch (Exception E) {
+            return "Cheese not found.";
+        }
     }
 
     public String editCheeseStock(int id, int stock) {
         LOGGER.info("editCheeseStock start");
-        cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
-        cheesePOJO.setStock(stock);
-        hibCheeseDAO.update(cheesePOJO);
-        LOGGER.info("editCheeseStock end");
-        return "Cheese has been edited: ";
+        try {
+            cheesePOJO = hibCheeseDAO.findById(CheesePOJO.class, id);
+            cheesePOJO.setStock(stock);
+            hibCheeseDAO.update(cheesePOJO);
+            LOGGER.info("editCheeseStock end");
+            return "Cheese has been edited: ";
+        } catch (Exception E) {
+            return "Cheese not found.";
+        }
     }
 
 }

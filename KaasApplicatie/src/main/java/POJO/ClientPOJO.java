@@ -6,7 +6,9 @@
 package POJO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,10 +34,10 @@ public class ClientPOJO {
     private String lastName;
     private String eMail;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AddressPOJO> addresses = new ArrayList<AddressPOJO>();
 
-    @OneToOne(mappedBy = "client")
+    @OneToOne(mappedBy = "client", cascade = CascadeType.MERGE, orphanRemoval = true)
     private AccountPOJO account;
     
     @OneToMany(mappedBy = "client")
@@ -59,7 +61,6 @@ public class ClientPOJO {
         this.orders = orders;
     }
 
-    
     
     public AccountPOJO getAccount() {
         return account;
@@ -111,6 +112,7 @@ public class ClientPOJO {
 
     @Override
     public String toString() {
-        return "ClientID: " + clientID + ", First Name: " + firstName + ", Last Name: " + lastName + ", E-Mail: " + eMail;
+        return "ClientID: " + clientID + ", First Name: " + firstName + ", Last Name: " + lastName + ", E-Mail: " + eMail + ", Addresses: " + "\n" 
+                + addresses + ", Orders: " + orders;
     }
 }

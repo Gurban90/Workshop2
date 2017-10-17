@@ -6,6 +6,7 @@
 package Menu;
 
 import Controller.AddressTypeController;
+import Controller.MenuController;
 import DatabaseConnector.DomXML;
 import Helper.DaoFactory;
 import Helper.Validator;
@@ -69,8 +70,8 @@ public class AddressTypeMenu {
                     break;
                 case 6:
                     LOGGER.info("Open AddressMenu");
-                    AddressMenu menu = new AddressMenu();
-                    menu.addressMenu();
+                    MenuController menu = new MenuController();
+                    menu.goToAddress();
                     break;
                 default:
                     System.out.println("Wrong number, try again.");

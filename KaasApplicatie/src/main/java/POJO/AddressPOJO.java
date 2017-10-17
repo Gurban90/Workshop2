@@ -1,5 +1,6 @@
 package POJO;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -135,7 +136,7 @@ public class AddressPOJO {
     @Override
     public String toString() {
         return "AddressID: " + addressID + ", Housenumber: " + housenumber + ", Housenumber Addition: " + houseNumberAddition + ", Streetname: " + streetname
-                + ", Postal Code: " + postalCode + ", City: " + city + ", ClientID: " + client.getClientID() + ", AddressTypeID: " + addresstype.getAddressTypeID();
+                + ", Postal Code: " + postalCode + ", City: " + city + ", ClientID: " + client.getClientID() + ", AddressType: " + addresstype + "\n";
     }
 
 }

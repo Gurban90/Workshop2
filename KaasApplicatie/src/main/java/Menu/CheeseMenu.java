@@ -1,6 +1,7 @@
 package Menu;
 
 import Controller.CheeseController;
+import Controller.MenuController;
 import DatabaseConnector.DomXML;
 import Helper.DaoFactory;
 import Helper.Validator;
@@ -15,7 +16,7 @@ public class CheeseMenu {
 
     private Scanner input;
     private int choice;
-       private CheeseController controller;
+    private CheeseController controller;
     private int id;
     private String name;
     private BigDecimal price;
@@ -70,8 +71,8 @@ public class CheeseMenu {
                     break;
                 case 7:
                     LOGGER.info("Open MainMenu");
-                    MainMenu mainmenu = new MainMenu();
-                    mainmenu.mainMenu();
+                    MenuController menu = new MenuController();
+                    menu.goToMain();
                     break;
                 default:
                     System.out.println("Wrong number, try again.");

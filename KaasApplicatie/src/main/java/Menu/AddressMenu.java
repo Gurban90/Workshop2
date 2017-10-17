@@ -6,6 +6,7 @@
 package Menu;
 
 import Controller.AddressController;
+import Controller.MenuController;
 import DatabaseConnector.DomXML;
 import Helper.DaoFactory;
 import Helper.Validator;
@@ -39,6 +40,7 @@ public class AddressMenu {
     private String clientLastName;
     private AddressController controller;
     private Validator validator;
+    private MenuController menu;
 
     public void addressMenu() {
 
@@ -46,6 +48,7 @@ public class AddressMenu {
         controller = new AddressController();
         validator = new Validator();
         input = new Scanner(System.in);
+        menu = new MenuController();
 
         System.out.print(" Address menu: " + "\n"
                 + "1. New Address" + "\n"
@@ -84,18 +87,16 @@ public class AddressMenu {
                     getAddressWithClientLastName();
                     break;
                 case 7:
-                    System.out.println(controller.findAllAddress());
+                    controller.findAllAddress();
                     addressMenu();
                     break;
                 case 8:
                     LOGGER.info("Open AddressTypeMenu");
-                    AddressTypeMenu menu = new AddressTypeMenu();
-                    menu.addressTypeMenu();
+                    menu.goToAddressType();
                     break;
                 case 9:
                     LOGGER.info("Open ClientMenu");
-                    ClientMenu clientMenu = new ClientMenu();
-                    clientMenu.clientMenu();
+                    menu.goToClient();
                 default:
                     System.out.println("Wrong number, try again.");
                     addressMenu();
@@ -231,8 +232,7 @@ public class AddressMenu {
         this.idString = input.nextLine();
         if (validator.idValidator(this.idString)) {
             this.id = Integer.parseInt(this.idString);
-            AddressPOJO returnedAddress = controller.findAddress(id);
-            System.out.println(returnedAddress);
+            controller.findAddress(id);
             addressMenu();
         } else {
             System.out.println("AddressID must be an integer and between 1 and 1000.");
@@ -245,8 +245,7 @@ public class AddressMenu {
         this.clientIDString = input.nextLine();
         if (validator.stringValidator(this.clientIDString)) {
             this.clientID = Integer.parseInt(this.clientIDString);
-            List<AddressPOJO> returnedAddressess = controller.findAddressWithClient(clientID);
-            System.out.println(returnedAddressess);
+            controller.findAddressWithClient(clientID);
             addressMenu();
         } else {
             System.out.println("ClientID must be an integer and between 1 and 1000.");
@@ -258,8 +257,7 @@ public class AddressMenu {
         System.out.print("Client last name please: ");
         this.clientLastName = input.nextLine();
         if (validator.stringValidator(this.clientLastName)) {
-            List<ClientPOJO> returnedClients = controller.findAddressWithClientName(clientLastName);
-            System.out.println(returnedClients);
+            controller.findAddressWithClientName(clientLastName);
         } else {
             System.out.println("Client last name cannot be empty.");
             addressMenu();
@@ -268,8 +266,7 @@ public class AddressMenu {
         this.clientIDString = input.nextLine();
         if (validator.stringValidator(this.clientIDString)) {
             this.clientID = Integer.parseInt(this.clientIDString);
-            List<AddressPOJO> returnedAddressess2 = controller.findAddressWithClient(clientID);
-            System.out.println(returnedAddressess2);
+            controller.findAddressWithClient(clientID);
             addressMenu();
         } else {
             System.out.println("ClientID must be an integer and between 1 and 1000.");

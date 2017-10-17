@@ -88,6 +88,7 @@ public class HelpClientOrderCheese {
 
         orderController = new OrderController();
         this.orderID = orderController.addOrder(orderDate, zeroTotalPrice, processedDate, clientIDint);
+        System.out.println(this.orderID);
     }
 
     public void setOrderDetail(int cheeseID, int ammountCheese) {
@@ -146,7 +147,7 @@ public class HelpClientOrderCheese {
         if (edit) {
             BigDecimal overallPrice = returnorder.getTotalPrice();
             BigDecimal quantity = new BigDecimal(returnOrderDetail.getQuantity());
-            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheeseID());
+            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheese().getCheeseID());
             BigDecimal price = cheese.getPrice();
 
             overallPrice = overallPrice.add(price.multiply(quantity));
@@ -157,7 +158,7 @@ public class HelpClientOrderCheese {
         } else {
             BigDecimal overallPrice = returnorder.getTotalPrice();
             BigDecimal quantity = new BigDecimal(returnOrderDetail.getQuantity());
-            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheeseID());
+            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheese().getCheeseID());
             BigDecimal price = cheese.getPrice();
 
             overallPrice = overallPrice.subtract(price.multiply(quantity));

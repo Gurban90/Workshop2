@@ -6,9 +6,11 @@
 package HibernateDao;
 
 import POJO.OrderDetailPOJO;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 /**
@@ -38,13 +40,26 @@ public class HibernateOrderDetailDAO extends GenericDAO {
     public List<OrderDetailPOJO> getWithOrder(int OrderID) {
        LOGGER.info("getWithOrder Start");
         em.getTransaction().begin();
-        Query query = em.createQuery("FROM OrderPOJO WHERE OrderID = :id");
+        Query query = em.createQuery("FROM OrderDetailPOJO WHERE OrderID = :id");
         query.setParameter("id", OrderID);
         List<OrderDetailPOJO> ordersDetails = query.getResultList();
         em.getTransaction().commit();
         LOGGER.info("getWithOrder End");
         return ordersDetails;
     }
+    
+     public List<OrderDetailPOJO> getWithCheese(int CheeseID) {
+       LOGGER.info("getWithOrder Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM OrderDetailPOJO WHERE CheeseID = :id");
+        query.setParameter("id", CheeseID);
+        List<OrderDetailPOJO> ordersDetails = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getWithOrder End");
+        return ordersDetails;
+    }
+     
+     
     
     
 }

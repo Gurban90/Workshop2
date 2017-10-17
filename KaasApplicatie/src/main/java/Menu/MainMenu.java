@@ -5,6 +5,7 @@
  */
 package Menu;
 
+import Controller.MenuController;
 import Helper.Validator;
 import java.util.*;
 import java.util.logging.Logger;
@@ -16,11 +17,13 @@ public class MainMenu {
     private Scanner input;
     private int choice;
     Validator validator;
+    MenuController menu;
 
     public void mainMenu() {
         LOGGER.info("mainMenu start");
         validator = new Validator();
         input = new Scanner(System.in);
+        menu = new MenuController();
 
         System.out.print(" Main menu: " + "\n"
                 + "1. Order Menu" + "\n"
@@ -38,23 +41,19 @@ public class MainMenu {
             switch (choice) {
                 case 1:
                     LOGGER.info("Open OrderMenu");
-                    OrderMenu ordermenu = new OrderMenu();
-                    ordermenu.orderMenu();
+                    menu.goToOrder();
                     break;
                 case 2:
                     LOGGER.info("Open CheeseMenu");
-                    CheeseMenu cheesemenu = new CheeseMenu();
-                    cheesemenu.cheeseMenu();
+                    menu.goToCheese();
                     break;
                 case 3:
                     LOGGER.info("Open ClientMenu");
-                    ClientMenu clientmenu = new ClientMenu();
-                    clientmenu.clientMenu();
+                    menu.goToClient();
                     break;
                 case 4:
                     LOGGER.info("Open LoginMenu");
-                    LoginMenu menu = new LoginMenu();
-                    menu.loginMenu();
+                    menu.goToLogin();
                     break;
                 case 5:
                     System.out.println("Goodbye...");

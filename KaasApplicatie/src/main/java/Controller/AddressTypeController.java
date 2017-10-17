@@ -12,6 +12,8 @@ import Interface.AddressDAOInterface;
 import POJO.AddressTypePOJO;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
+import org.hibernate.JDBCException;
 
 /**
  *
@@ -61,20 +63,26 @@ public class AddressTypeController {
 
     public void removeAddressType(int ID) {
         LOGGER.info("removeAddressType start");
-        hibAddressDAO.delete(AddressTypePOJO.class, ID);
-        hibAddressDAO.finalize();
+        try {
+            hibAddressDAO.delete(AddressTypePOJO.class, ID);
+            hibAddressDAO.finalize();
+        } catch (Exception E) {
+            System.out.println("Has to be an existing AddressType.");
+        }
         LOGGER.info("removeAddressType end");
     }
-    
-   
 
     public String editAddressType(int id, String addressType) {
         LOGGER.info("editAddressType start");
-        addresstypepojo = hibAddressDAO.findById(AddressTypePOJO.class, id);
-        addresstypepojo.setAddressType(addressType);
-        hibAddressDAO.update(addresstypepojo);
-        hibAddressDAO.finalize();
-        LOGGER.info("editAddressType end");
-        return "AddressType has been edited.";
+        try {
+            addresstypepojo = hibAddressDAO.findById(AddressTypePOJO.class, id);
+            addresstypepojo.setAddressType(addressType);
+            hibAddressDAO.update(addresstypepojo);
+            hibAddressDAO.finalize();
+            LOGGER.info("editAddressType end");
+            return "AddressType has been edited.";
+        } catch (Exception E) {
+            return "AddressType not found.";
+        }
     }
 }

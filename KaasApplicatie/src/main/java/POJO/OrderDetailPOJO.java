@@ -102,7 +102,7 @@ public class OrderDetailPOJO {
 
     @Override
     public String toString() {
-        return "OrderDetailID: " + orderDetailID + ", Quantity: " + quantity + ", CheeseID: " + cheeseID + ", OrderID: " + orderID;
+        return "OrderDetailID: " + orderDetailID + ", Quantity: " + quantity + ", Order: " + order.getOrderID()+ ", Cheese: " + cheese + "\n";
     }
 
 }

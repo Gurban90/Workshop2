@@ -59,75 +59,91 @@ public class OrderController {
 
     public void addOrderDetail(int quantity, int orderID, int cheeseID) {
         LOGGER.info("setOrderDetail start");
+        orderdetailpojo.setQuantity(quantity);
+        orderdetailpojo.setOrder(hibOrderDAO.findById(OrderPOJO.class, orderID));
+        orderdetailpojo.setCheese(hibCheeseDAO.findById(CheesePOJO.class, cheeseID));
         try {
-            orderdetailpojo.setQuantity(quantity);
-            orderdetailpojo.setOrder(hibOrderDAO.findById(OrderPOJO.class, orderID));
-            orderdetailpojo.setCheese(hibCheeseDAO.findById(CheesePOJO.class, cheeseID));
-            hibOrderDetailDAO.create(orderdetailpojo);
-            hibOrderDetailDAO.finalize();
-            System.out.println("OrderDetail is added and has ID: " + orderdetailpojo.getOrderDetailID());
-            LOGGER.info("setorderdetail end");
-        } catch (PersistenceException E) {
+            orderdetailpojo.getCheese().getCheeseID();
+            orderdetailpojo.getOrder().getOrderID();
+        } catch (Exception E) {
             System.out.println("First add the Order and Cheese.");
+            return;
         }
+        hibOrderDetailDAO.create(orderdetailpojo);
+        hibOrderDetailDAO.finalize();
+        System.out.println("OrderDetail is added and has ID: " + orderdetailpojo.getOrderDetailID());
+        LOGGER.info("setorderdetail end");
     }
 
     public String removeOrder(int orderID) {
         LOGGER.info("start");
-        hibOrderDAO.delete(OrderPOJO.class, orderID);
-        hibOrderDAO.finalize();
+        try {
+            hibOrderDAO.delete(OrderPOJO.class, orderID);
+            hibOrderDAO.finalize();
+        } catch (Exception E) {
+            System.out.println("Has to be an existing Order.");
+        }
         LOGGER.info("end");
         return "order removed.";
     }
 
     public String removeOrderDetail(int orderDetailID) {
         LOGGER.info("start");
-        hibOrderDetailDAO.delete(OrderDetailPOJO.class, orderDetailID);
-        hibOrderDetailDAO.finalize();
+        try {
+            hibOrderDetailDAO.delete(OrderDetailPOJO.class, orderDetailID);
+            hibOrderDetailDAO.finalize();
+        } catch (Exception E) {
+            System.out.println("Has to be an existing OrderDetail.");
+        }
         LOGGER.info("end");
         return "orderDetail removed.";
     }
 
-    public List<OrderDetailPOJO> searchOrderDetailWithOrder(int orderID) {
+    public void searchOrderDetailWithOrder(int orderID) {
         LOGGER.info("start");
-        List<OrderDetailPOJO> returnedOrderDetail = hibOrderDetailDAO.getWithOrder(orderID);
+        System.out.println(hibOrderDetailDAO.getWithOrder(orderID));
         hibOrderDetailDAO.finalize();
         LOGGER.info("end");
-        return returnedOrderDetail;
     }
 
-    public List<OrderPOJO> getAllOrders() {
+    public void getAllOrders() {
         LOGGER.info("start");
-        List<OrderPOJO> returnedOrders = hibOrderDAO.getAll();
+        System.out.println(hibOrderDAO.getAll());
         hibOrderDAO.finalize();
         LOGGER.info("end");
-        return returnedOrders;
     }
 
-    public OrderPOJO searchOrder(int orderID) {
+    public void searchOrder(int orderID) {
         LOGGER.info("start");
-        OrderPOJO returnedOrder = hibOrderDAO.findById(OrderPOJO.class, orderID);
+        System.out.println(hibOrderDAO.findById(OrderPOJO.class, orderID));
         hibOrderDAO.finalize();
         LOGGER.info("end");
-        return returnedOrder;
     }
 
     public void editOrderTime(int orderID, LocalDateTime x) {
         LOGGER.info("start");
-        orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
-        orderpojo.setOrderDate(x);
-        hibOrderDAO.update(orderpojo);
-        hibOrderDAO.finalize();
-        LOGGER.info("end");
+        try {
+            orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
+            orderpojo.setOrderDate(x);
+            hibOrderDAO.update(orderpojo);
+            hibOrderDAO.finalize();
+            LOGGER.info("end");
+        } catch (Exception E) {
+            System.out.println("Order not found.");
+        }
     }
 
     public void editOrderDeliverTime(int orderID, LocalDateTime x) {
         LOGGER.info("start");
-        orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
-        orderpojo.setProcessedDate(x);
-        hibOrderDAO.update(orderpojo);
-        hibOrderDAO.finalize();
-        LOGGER.info("end");
+        try {
+            orderpojo = hibOrderDAO.findById(OrderPOJO.class, orderID);
+            orderpojo.setProcessedDate(x);
+            hibOrderDAO.update(orderpojo);
+            hibOrderDAO.finalize();
+            LOGGER.info("end");
+        } catch (Exception E) {
+            System.out.println("Order not found.");
+        }
     }
 
     public String editOrderDetailCheese(int orderDetailID, int cheeseID) {
@@ -139,19 +155,23 @@ public class OrderController {
             hibOrderDetailDAO.finalize();
             LOGGER.info("end");
             return "Orderdetail cheese editted.";
-        } catch (PersistenceException E) {
-            return "Has to be an existing Cheese.";
+        } catch (Exception E) {
+            return "OrderDetail or Cheese not found.";
         }
     }
 
     public String editOrderDetailAmmount(int orderDetailID, int cheeseAmmount) {
         LOGGER.info("start");
-        orderdetailpojo = hibOrderDetailDAO.findById(OrderDetailPOJO.class, orderDetailID);
-        orderdetailpojo.setQuantity(cheeseAmmount);
-        hibOrderDetailDAO.update(orderpojo);
-        hibOrderDetailDAO.finalize();
-        LOGGER.info("end");
-        return "Orderdetail ammount eddited.";
+        try {
+            orderdetailpojo = hibOrderDetailDAO.findById(OrderDetailPOJO.class, orderDetailID);
+            orderdetailpojo.setQuantity(cheeseAmmount);
+            hibOrderDetailDAO.update(orderpojo);
+            hibOrderDetailDAO.finalize();
+            LOGGER.info("end");
+            return "Orderdetail ammount eddited.";
+        } catch (Exception E) {
+            return "OrderDetail not found.";
+        }
     }
 
 }

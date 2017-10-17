@@ -8,10 +8,14 @@ package Helper;
 import DatabaseConnector.DomXML;
 import HibernateDao.HibernateCheeseDAO;
 import HibernateDao.HibernateClientDAO;
+import HibernateDao.HibernateOrderDAO;
+import HibernateDao.HibernateOrderDetailDAO;
 import Interface.CheeseDAOInterface;
 import Interface.ClientDAOInterface;
 import POJO.CheesePOJO;
 import POJO.ClientPOJO;
+import POJO.OrderDetailPOJO;
+import POJO.OrderPOJO;
 import java.util.List;
 
 public class IDCheck {
@@ -25,7 +29,6 @@ public class IDCheck {
     public boolean checkCheeseID(int sendID) {
 
         HibernateCheeseDAO Dao = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
-        
 
         List<CheesePOJO> list = Dao.getAll();
         for (CheesePOJO idsearch : list) {
@@ -52,4 +55,27 @@ public class IDCheck {
         }
         return true;
     }
+
+    public boolean checkCheeseOrder(int cheeseID) {
+        boolean isOrdered = true;
+        HibernateOrderDetailDAO Dao = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
+
+        List<OrderDetailPOJO> list = Dao.getWithCheese(cheeseID);
+        if (list.isEmpty()) {
+            isOrdered = false;
+        }
+        return isOrdered;
+    }
+
+    public boolean checkClientOrder(int clientID) {
+        boolean isOrdered = true;
+        HibernateOrderDAO Dao = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+
+        List<OrderPOJO> list = Dao.getOrderWithClient(clientID);
+        if (list.isEmpty()) {
+            isOrdered = false;
+        }
+        return isOrdered;
+    }
+
 }
