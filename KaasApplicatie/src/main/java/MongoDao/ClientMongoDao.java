@@ -177,4 +177,7 @@ public class ClientMongoDao implements ClientDAOInterface {
         mongoConnector.closeConnection();
         logger.info("deleteClient End");
     }
+    
+      @Override
+    public void finalize(){};
 }

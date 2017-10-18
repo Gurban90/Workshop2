@@ -410,5 +410,8 @@ public class AddressDAO implements AddressDAOInterface {
         }
         LOGGER.info("deleteaddresstype end");
     }
+    
+     @Override
+    public void finalize(){};
 
 }

@@ -263,4 +263,6 @@ public class AddressMongoDao implements AddressDAOInterface {
         logger.info("deleteAddressType End");
     }
 
+      @Override
+    public void finalize(){};
 }

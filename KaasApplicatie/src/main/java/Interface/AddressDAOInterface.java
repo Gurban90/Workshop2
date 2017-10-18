@@ -29,4 +29,6 @@ public interface AddressDAOInterface {
     public void updateAddressType(AddressTypePOJO addressType);
     
     public void deleteAddressType (AddressTypePOJO addressType);
+    
+    public void finalize();
 }

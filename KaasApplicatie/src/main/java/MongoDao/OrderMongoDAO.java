@@ -168,4 +168,7 @@ public class OrderMongoDAO implements OrderDAOInterface {
         mongoConnector.closeConnection();
         logger.info("deleteOrde End");
     }
+    
+      @Override
+    public void finalize(){};
 }

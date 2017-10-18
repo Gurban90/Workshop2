@@ -36,7 +36,7 @@ public abstract class GenericDAO {
         return entity;
     }
 
-    public abstract <T> List<T> getAll();
+    
 
     public <T> void update(T entity) {
         em.getTransaction().begin();

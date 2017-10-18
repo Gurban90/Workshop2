@@ -11,10 +11,12 @@ public interface CheeseDAOInterface {
 
     public CheesePOJO getCheese(CheesePOJO cheese);
     
-    public CheesePOJO getCheeseWithName(CheesePOJO cheese);
+    public List<CheesePOJO> getCheeseWithName(CheesePOJO cheese);
 
     public void updateCheese(CheesePOJO cheese);
 
     public void deleteCheese(CheesePOJO cheese);
+    
+    public void finalize();
 
 }

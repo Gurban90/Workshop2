@@ -17,4 +17,6 @@ public interface OrderDAOInterface {
     public void updateOrder(OrderPOJO order);
     
     public void deleteOrder (OrderPOJO order);
+    
+    public void finalize();
 }

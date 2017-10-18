@@ -12,6 +12,8 @@ import HibernateDao.HibernateOrderDAO;
 import HibernateDao.HibernateOrderDetailDAO;
 import Interface.CheeseDAOInterface;
 import Interface.ClientDAOInterface;
+import Interface.OrderDAOInterface;
+import Interface.OrderDetailDAOInterface;
 import POJO.CheesePOJO;
 import POJO.ClientPOJO;
 import POJO.OrderDetailPOJO;
@@ -28,9 +30,9 @@ public class IDCheck {
 
     public boolean checkCheeseID(int sendID) {
 
-        HibernateCheeseDAO Dao = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
+        CheeseDAOInterface Dao = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
 
-        List<CheesePOJO> list = Dao.getAll();
+        List<CheesePOJO> list = Dao.getAllCheese();
         for (CheesePOJO idsearch : list) {
             int returnedid = idsearch.getCheeseID();
 
@@ -43,9 +45,9 @@ public class IDCheck {
 
     public boolean checkClientID(int sendID) {
 
-        HibernateClientDAO Dao = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
+        ClientDAOInterface Dao = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
 
-        List<ClientPOJO> list = Dao.getAll();
+        List<ClientPOJO> list = Dao.getAllClient();
         for (ClientPOJO idsearch : list) {
             int returnedid = idsearch.getClientID();
 
@@ -58,7 +60,7 @@ public class IDCheck {
 
     public boolean checkCheeseOrder(int cheeseID) {
         boolean isOrdered = true;
-        HibernateOrderDetailDAO Dao = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
+        OrderDetailDAOInterface Dao = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
 
         List<OrderDetailPOJO> list = Dao.getWithCheese(cheeseID);
         if (list.isEmpty()) {
@@ -69,9 +71,11 @@ public class IDCheck {
 
     public boolean checkClientOrder(int clientID) {
         boolean isOrdered = true;
-        HibernateOrderDAO Dao = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        OrderDAOInterface Dao = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        ClientPOJO client = new ClientPOJO();
+        client.setClientID(clientID);
 
-        List<OrderPOJO> list = Dao.getOrderWithClient(clientID);
+        List<OrderPOJO> list = Dao.getOrderWithClient(client);
         if (list.isEmpty()) {
             isOrdered = false;
         }

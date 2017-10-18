@@ -127,22 +127,24 @@ public class CheeseDAO implements CheeseDAOInterface {
     }
 
     @Override
-    public CheesePOJO getCheeseWithName(CheesePOJO cheese) {
+    public List<CheesePOJO> getCheeseWithName(CheesePOJO cheese) {
         logger.info("getCheeseWithName Start");
         String query = "SELECT * FROM Cheese WHERE Name=?";
-        CheesePOJO foundCheese = new CheesePOJO();
+        List<CheesePOJO> returnedCheeses = new ArrayList<>();
+       
         try {
             connection = connectionfactory.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setObject(1, cheese.getCheeseName());
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.isBeforeFirst()) {
-                resultSet.next();
-                foundCheese.setCheeseID(resultSet.getInt(1));
-                foundCheese.setCheeseName(resultSet.getString(2));
-                foundCheese.setPrice(resultSet.getBigDecimal(3));
-                foundCheese.setStock(resultSet.getInt(4));
+             while (resultSet.next()) {
+                CheesePOJO foundcheese = new CheesePOJO();
+                foundcheese.setCheeseID(resultSet.getInt(1));
+                foundcheese.setCheeseName(resultSet.getString(2));
+                foundcheese.setPrice(resultSet.getBigDecimal(3));
+                foundcheese.setStock(resultSet.getInt(4));
+                returnedCheeses.add(foundcheese);
             }
             resultSet.close();
         } catch (SQLException e) {
@@ -155,7 +157,7 @@ public class CheeseDAO implements CheeseDAOInterface {
             }
         }
         logger.info("getCheeseWithName end");
-        return foundCheese;
+        return returnedCheeses;
 
     }
 
@@ -215,4 +217,6 @@ public class CheeseDAO implements CheeseDAOInterface {
         logger.info("deleteCheese end");
     }
 
+     @Override
+    public void finalize(){};
 }

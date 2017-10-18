@@ -49,8 +49,9 @@ public class LoginMenu {
                 + "5. Search for an account with AccountID" + "\n"
                 + "6. Search for an account with Accountname" + "\n"
                 + "7. Get all accounts" + "\n"
-                + "8. Go to main menu" + "\n"
-                + "9. Exit" + "\n"
+                + "8. Get all accounts with client." + "\n"
+                + "9. Go to main menu" + "\n"
+                + "10. Exit" + "\n"
                 + "Please enter the number of your choice: ");
 
         String choiceNumber = input.nextLine();
@@ -80,9 +81,12 @@ public class LoginMenu {
                     getAllAccounts();
                     break;
                 case 8:
-                    goToMain();
+                    getAllAccountsWithClient();
                     break;
                 case 9:
+                    goToMain();
+                    break;
+                case 10:
                     System.out.println("Goodbye...");
                     System.exit(0);
                 default:
@@ -385,4 +389,17 @@ public class LoginMenu {
         }
     }
 
-}
+    private void getAllAccountsWithClient() {
+        if (token.checkJWT()) {
+        } else {
+            System.out.println("Please log in first.");
+            loginMenu();
+        }
+        List<AccountPOJO> returnedAccounts = controller.getAccountsWithClients();
+        for (int i = 0; i < returnedAccounts.size(); i++) {
+            System.out.println("" + returnedAccounts.get(i) + " ClientID: " + returnedAccounts.get(i).getClient().getClientID());
+        }
+            loginMenu();
+        }
+
+    }

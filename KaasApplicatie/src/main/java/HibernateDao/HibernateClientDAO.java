@@ -5,6 +5,7 @@
  */
 package HibernateDao;
 
+import Interface.ClientDAOInterface;
 import POJO.ClientPOJO;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,7 +16,7 @@ import javax.persistence.Query;
  *
  * @author Gerben
  */
-public class HibernateClientDAO extends GenericDAO {
+public class HibernateClientDAO extends GenericDAO implements ClientDAOInterface {
 
     private Logger LOGGER = Logger.getLogger(HibernateClientDAO.class.getName());
    
@@ -24,9 +25,8 @@ public class HibernateClientDAO extends GenericDAO {
         super(em);
     }
 
-
     @Override
-    public List<ClientPOJO> getAll() {
+    public List<ClientPOJO> getAllClient() {
         LOGGER.info("getAllClient Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM ClientPOJO");
@@ -36,6 +36,7 @@ public class HibernateClientDAO extends GenericDAO {
         return clients;
     }
      
+    @Override
     public List<ClientPOJO> getClientWithFirstName(String firstname) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
@@ -47,6 +48,7 @@ public class HibernateClientDAO extends GenericDAO {
         return clients;
     }
 
+    @Override
     public List<ClientPOJO> getClientWithLastName(String lastname) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
@@ -58,6 +60,7 @@ public class HibernateClientDAO extends GenericDAO {
         return clients;
     }
 
+    @Override
     public List<ClientPOJO> getClientWithEmail(String email) {
         LOGGER.info("getAccountWithName Start");
         em.getTransaction().begin();
@@ -67,6 +70,27 @@ public class HibernateClientDAO extends GenericDAO {
         em.getTransaction().commit();
         LOGGER.info("getAccountWithName end");
         return clients;
+    }
+
+    @Override
+    public Integer addClient(ClientPOJO client) {
+        ClientPOJO client2 = super.create(client);
+        return client2.getClientID();
+    }
+
+    @Override
+    public ClientPOJO getClient(ClientPOJO client) {
+        return super.findById(ClientPOJO.class, client.getClientID());
+    }
+
+    @Override
+    public void updateClient(ClientPOJO client) {
+        super.update(client);
+    }
+
+    @Override
+    public void deleteClient(ClientPOJO client) {
+        super.delete(ClientPOJO.class, client.getClientID());
     }
     
 

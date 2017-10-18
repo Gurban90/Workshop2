@@ -16,4 +16,8 @@ public interface OrderDetailDAOInterface {
     public void deleteOrderDetail(OrderDetailPOJO orderDetail);
     
     public void updateOrderDetail(OrderDetailPOJO orderDetail) ;
+    
+     public List<OrderDetailPOJO> getWithCheese(int CheeseID);
+    
+    public void finalize();
 }

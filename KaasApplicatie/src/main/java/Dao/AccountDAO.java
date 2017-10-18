@@ -4,6 +4,7 @@ package Dao;
 import Helper.ConnectionFactory;
 import Interface.AccountDAOInterface;
 import POJO.AccountPOJO;
+import POJO.ClientPOJO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -200,5 +201,12 @@ public class AccountDAO implements AccountDAOInterface {
         }
         LOGGER.info("deleteAccount end");
     }
+           
+    @Override
+    public void finalize(){};
 
+    @Override
+    public List<AccountPOJO> getAccountsWithClients() {
+        throw new UnsupportedOperationException("Not necessary yet."); 
+    }
 }

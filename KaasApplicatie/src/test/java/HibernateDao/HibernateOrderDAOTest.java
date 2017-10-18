@@ -47,7 +47,7 @@ public class HibernateOrderDAOTest {
     }
 
     /**
-     * Test of getAll method, of class HibernateOrderDAO.
+     * Test of getAllClient method, of class HibernateOrderDAO.
      */
     @Test
     public void testGetAll() {

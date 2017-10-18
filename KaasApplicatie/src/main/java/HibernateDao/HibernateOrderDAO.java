@@ -5,6 +5,7 @@
  */
 package HibernateDao;
 
+import Interface.OrderDAOInterface;
 import POJO.ClientPOJO;
 import POJO.OrderPOJO;
 import java.util.List;
@@ -16,7 +17,7 @@ import javax.persistence.Query;
  *
  * @author Gerben
  */
-public class HibernateOrderDAO extends GenericDAO {
+public class HibernateOrderDAO extends GenericDAO implements OrderDAOInterface {
 
      private Logger LOGGER = Logger.getLogger(HibernateOrderDAO.class.getName());
     
@@ -24,10 +25,8 @@ public class HibernateOrderDAO extends GenericDAO {
     public HibernateOrderDAO(EntityManager em) {
         super(em);
     }
-
-
-   @Override
-    public List<OrderPOJO> getAll() {
+  
+    public List<OrderPOJO> getAllOrder() {
        LOGGER.info("getAllOrder Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM OrderPOJO");
@@ -47,6 +46,32 @@ public class HibernateOrderDAO extends GenericDAO {
         LOGGER.info("getOrderWithClient end");
         return orders;
     } 
+
+    @Override
+    public Integer addOrder(OrderPOJO order) {
+        OrderPOJO order2 = super.create(order);
+        return order2.getOrderID();
+    }
+
+    @Override
+    public OrderPOJO getOrder(OrderPOJO order) {
+        return super.findById(OrderPOJO.class, order.getOrderID());
+    }
+
+    @Override
+    public List<OrderPOJO> getOrderWithClient(ClientPOJO client) {
+        return getOrderWithClient(client.getClientID());
+    }
+
+    @Override
+    public void updateOrder(OrderPOJO order) {
+        super.update(order);
+    }
+
+    @Override
+    public void deleteOrder(OrderPOJO order) {
+        super.delete(OrderPOJO.class, order.getOrderID());
+    }
      
      
      

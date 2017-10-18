@@ -2,6 +2,7 @@ package POJO;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -80,8 +81,7 @@ public class AccountPOJO {
 
     @Override
     public String toString() {
-        return "AccountID: " + accountID + ", AccountName: " + accountName + " Password: " + password + ", AccountStatus: " + accountStatus+ ", Client: " + 
-                client;
+        return "AccountID: " + accountID + ", AccountName: " + accountName + " Password: " + password + ", AccountStatus: " + accountStatus;
     }
 
 }

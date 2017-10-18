@@ -251,4 +251,7 @@ public class OrderDAO implements OrderDAOInterface {
 
         LOGGER.info("deleteOrder end");
     }
+    
+     @Override
+    public void finalize(){};
 }

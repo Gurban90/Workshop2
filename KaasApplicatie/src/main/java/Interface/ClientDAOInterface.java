@@ -20,5 +20,7 @@ public interface ClientDAOInterface {
     public void updateClient(ClientPOJO client);
 
     public void deleteClient(ClientPOJO client);
+    
+    public void finalize();
 
 }

@@ -1,6 +1,7 @@
 package Interface;
 
 import POJO.AccountPOJO;
+import POJO.ClientPOJO;
 import java.util.List;
 
 public interface AccountDAOInterface {
@@ -16,4 +17,9 @@ public interface AccountDAOInterface {
     public void updateAccount(AccountPOJO account);
 
     public void deleteAccount(AccountPOJO account);
+
+    public List<AccountPOJO> getAccountsWithClients();
+
+    public void finalize();
+
 }

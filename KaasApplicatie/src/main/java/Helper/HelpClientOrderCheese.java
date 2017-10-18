@@ -122,8 +122,10 @@ public class HelpClientOrderCheese {
     }
 
     public String saveTotalPrice() {
-        HibernateOrderDAO orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
-        returnedOrderPOJO = orderDAO.findById(OrderPOJO.class, orderID);
+        OrderDAOInterface orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        OrderPOJO order = new OrderPOJO();
+        order.setOrderID(orderID);
+        returnedOrderPOJO = orderDAO.getOrder(order);
 
         if (returnedOrderPOJO.getTotalPrice() == new BigDecimal(0)) {
         } else {
@@ -132,17 +134,21 @@ public class HelpClientOrderCheese {
         BigDecimal price = returnedOrderPOJO.getTotalPrice();
         price = price.add(totalPrice);
         returnedOrderPOJO.setTotalPrice(price);
-        orderDAO.update(returnedOrderPOJO);
+        orderDAO.updateOrder(returnedOrderPOJO);
         return "Total price updated";
     }
 
     public String minusCheese(int orderDetailId, int orderId, boolean edit) {
-        HibernateOrderDAO orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
-        HibernateOrderDetailDAO orderDetailDAO = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
+        OrderDAOInterface orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
+        OrderDetailDAOInterface orderDetailDAO = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
         CheeseController cheesecontrol = new CheeseController();
-
-        OrderDetailPOJO returnOrderDetail = orderDetailDAO.findById(OrderDetailPOJO.class, orderDetailId);
-        OrderPOJO returnorder = orderDAO.findById(OrderPOJO.class, orderId);
+        
+        OrderDetailPOJO orderdetail = new OrderDetailPOJO();
+        orderdetail.setOrderDetailID(orderDetailId);
+        OrderDetailPOJO returnOrderDetail = orderDetailDAO.getOrderDetailWithID(orderdetail);
+        OrderPOJO order = new OrderPOJO();
+        order.setOrderID(orderId);
+        OrderPOJO returnorder = orderDAO.getOrder(order);
        
         if (edit) {
             BigDecimal overallPrice = returnorder.getTotalPrice();
@@ -153,7 +159,7 @@ public class HelpClientOrderCheese {
             overallPrice = overallPrice.add(price.multiply(quantity));
 
             returnorder.setTotalPrice(overallPrice);
-            orderDAO.update(returnorder);
+            orderDAO.updateOrder(returnorder);
 
         } else {
             BigDecimal overallPrice = returnorder.getTotalPrice();
@@ -164,7 +170,7 @@ public class HelpClientOrderCheese {
             overallPrice = overallPrice.subtract(price.multiply(quantity));
 
             returnorder.setTotalPrice(overallPrice);
-            orderDAO.update(returnorder);
+            orderDAO.updateOrder(returnorder);
         }
 
         return "Total price updated";

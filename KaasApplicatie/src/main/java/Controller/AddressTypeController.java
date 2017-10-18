@@ -24,10 +24,10 @@ public class AddressTypeController {
     private static final Logger LOGGER = Logger.getLogger(CheeseController.class.getName());
     private AddressDAOInterface addressdao;
     private AddressTypePOJO addresstypepojo;
-    private HibernateAddressDAO hibAddressDAO;
+    
 
     public AddressTypeController() {
-        hibAddressDAO = (HibernateAddressDAO) HibernateDaoFactory.getInstance().getDao("address");
+        addressdao = (HibernateAddressDAO) HibernateDaoFactory.getInstance().getDao("address");
         addresstypepojo = new AddressTypePOJO();
     }
 
@@ -38,16 +38,17 @@ public class AddressTypeController {
 
     public List<AddressTypePOJO> findAllAddressTypes() {
         LOGGER.info("findAllAddressTypes start");
-        List<AddressTypePOJO> addressTypes = hibAddressDAO.getAllAddressType();
-        hibAddressDAO.finalize();
+        List<AddressTypePOJO> addressTypes = addressdao.getAllAddressType();
+        addressdao.finalize();
         LOGGER.info("findAllAddressTypes end");
         return addressTypes;
     }
 
     public AddressTypePOJO findAddressType(int ID) {
         LOGGER.info("findAddressType start");
-        AddressTypePOJO returnedAddressType = hibAddressDAO.findById(AddressTypePOJO.class, ID);
-        hibAddressDAO.finalize();
+        addresstypepojo.setAddressTypeID(ID);
+        AddressTypePOJO returnedAddressType = addressdao.getAddressType(addresstypepojo);
+        addressdao.finalize();
         LOGGER.info("findAddressType end");
         return returnedAddressType;
     }
@@ -55,8 +56,8 @@ public class AddressTypeController {
     public int newAddressType(String addressType) {
         LOGGER.info("newAddressType start");
         addresstypepojo.setAddressType(addressType);
-        hibAddressDAO.create(addresstypepojo);
-        hibAddressDAO.finalize();
+        addressdao.addAddressType(addresstypepojo);
+        addressdao.finalize();
         LOGGER.info("newAddressType end");
         return addresstypepojo.getAddressTypeID();
     }
@@ -64,8 +65,9 @@ public class AddressTypeController {
     public void removeAddressType(int ID) {
         LOGGER.info("removeAddressType start");
         try {
-            hibAddressDAO.delete(AddressTypePOJO.class, ID);
-            hibAddressDAO.finalize();
+            addresstypepojo.setAddressTypeID(ID);
+            addressdao.deleteAddressType(addresstypepojo);
+            addressdao.finalize();
         } catch (Exception E) {
             System.out.println("Has to be an existing AddressType.");
         }
@@ -75,10 +77,10 @@ public class AddressTypeController {
     public String editAddressType(int id, String addressType) {
         LOGGER.info("editAddressType start");
         try {
-            addresstypepojo = hibAddressDAO.findById(AddressTypePOJO.class, id);
-            addresstypepojo.setAddressType(addressType);
-            hibAddressDAO.update(addresstypepojo);
-            hibAddressDAO.finalize();
+            addresstypepojo.setAddressTypeID(id);
+            addresstypepojo = addressdao.getAddressType(addresstypepojo);
+            addressdao.updateAddressType(addresstypepojo);
+            addressdao.finalize();
             LOGGER.info("editAddressType end");
             return "AddressType has been edited.";
         } catch (Exception E) {

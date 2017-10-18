@@ -5,6 +5,7 @@
  */
 package HibernateDao;
 
+import Interface.AddressDAOInterface;
 import POJO.AddressPOJO;
 import POJO.AddressTypePOJO;
 import POJO.ClientPOJO;
@@ -18,7 +19,7 @@ import javax.persistence.Query;
  *
  * @author Gerben
  */
-public class HibernateAddressDAO extends GenericDAO {
+public class HibernateAddressDAO extends GenericDAO implements AddressDAOInterface {
     
     private Logger LOGGER = Logger.getLogger(HibernateAddressDAO.class.getName());
     
@@ -27,9 +28,9 @@ public class HibernateAddressDAO extends GenericDAO {
         super(em);
     }
     
-     
+   
     @Override
-     public List<AddressPOJO> getAll() {
+     public List<AddressPOJO> getAllAddress() {
         LOGGER.info("getAllClient Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM AddressPOJO");
@@ -50,6 +51,7 @@ public class HibernateAddressDAO extends GenericDAO {
         return addresses;
     }
       
+    @Override
        public List<AddressTypePOJO> getAllAddressType() {
         LOGGER.info("getAllAddressType Start");
         em.getTransaction().begin();
@@ -58,6 +60,54 @@ public class HibernateAddressDAO extends GenericDAO {
         em.getTransaction().commit();
         LOGGER.info("getAllAddressType End");
         return addressTypes;
+    }
+
+    @Override
+    public Integer addAddress(AddressPOJO adress) {
+        AddressPOJO address2 = super.create(adress);
+        return address2.getAddressID();
+    }
+
+
+    @Override
+    public AddressPOJO getAddress(AddressPOJO address) {
+        return super.findById(AddressPOJO.class, address.getAddressID());
+    }
+
+    @Override
+    public void updateAddress(AddressPOJO address) {
+        super.update(address);
+    }
+
+    @Override
+    public void deleteAddress(AddressPOJO address) {
+        super.delete(AddressPOJO.class, address.getAddressID());
+    }
+
+    @Override
+    public Integer addAddressType(AddressTypePOJO addressType) {
+        AddressTypePOJO addresstype2 = super.create(addressType);
+        return addresstype2.getAddressTypeID();
+    }
+
+    @Override
+    public List<AddressPOJO> getAddressWithClient(ClientPOJO client) {
+       return getAddressWithClient(client.getClientID());
+    }
+
+    @Override
+    public AddressTypePOJO getAddressType(AddressTypePOJO addressType) {
+        return super.findById(AddressTypePOJO.class, addressType.getAddressTypeID());
+    }
+
+    @Override
+    public void updateAddressType(AddressTypePOJO addressType) {
+        super.update(addressType);
+    }
+
+    @Override
+    public void deleteAddressType(AddressTypePOJO addressType) {
+        super.delete(AddressTypePOJO.class, addressType.getAddressTypeID());
     }
        
       

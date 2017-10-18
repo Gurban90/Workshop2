@@ -105,14 +105,20 @@ public class CheeseMongoDao implements CheeseDAOInterface {
     }
 
     @Override
-    public CheesePOJO getCheeseWithName(CheesePOJO cheese) {
+    public List<CheesePOJO> getCheeseWithName(CheesePOJO cheese) {
         logger.info("getCheeseWithName Start");
+        List<CheesePOJO> cheeses = new ArrayList<>();
         MongoCollection<Document> collection = mongoConnector.makeConnection().getCollection("cheese");
-        Document doc = collection.find(eq("name", cheese.getCheeseName())).first();
+        MongoCursor<Document> cursor = collection.find(eq("name", cheese.getCheeseName())).iterator();
+         while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            cheeses.add(convertDocumentToCheese(doc));
+        }
         mongoConnector.closeConnection();
-        logger.info("getCheeseWithName end");
-        return convertDocumentToCheese(doc);
+        logger.info("getAllCheese end");
+        return cheeses;
     }
+    
 
     @Override
     public void updateCheese(CheesePOJO cheese) {
@@ -144,4 +150,6 @@ public class CheeseMongoDao implements CheeseDAOInterface {
         logger.info("deleteCheese End");
     }
 
+      @Override
+    public void finalize(){};
 }

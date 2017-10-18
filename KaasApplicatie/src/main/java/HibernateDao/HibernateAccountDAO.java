@@ -1,12 +1,15 @@
 package HibernateDao;
 
+import Interface.AccountDAOInterface;
 import POJO.AccountPOJO;
+import POJO.ClientPOJO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public class HibernateAccountDAO extends GenericDAO {
+public class HibernateAccountDAO extends GenericDAO implements AccountDAOInterface {
 
     private Logger LOGGER = Logger.getLogger(HibernateAccountDAO.class.getName());
 
@@ -15,7 +18,7 @@ public class HibernateAccountDAO extends GenericDAO {
     }
 
     @Override
-    public List<AccountPOJO> getAll() {
+    public List<AccountPOJO> getAllAccount() {
         LOGGER.info("getAllAccount Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM AccountPOJO");
@@ -36,4 +39,48 @@ public class HibernateAccountDAO extends GenericDAO {
         return accounts;
     }
 
+    @Override
+    public Integer addAccount(AccountPOJO account) {
+        AccountPOJO account2 = super.create(account);
+        return account2.getAccountID();
+    }
+
+    @Override
+    public AccountPOJO getAccount(AccountPOJO account) {
+        return super.findById(AccountPOJO.class, account.getAccountID());
+    }
+
+    @Override
+    public List<AccountPOJO> getAccountWithName(AccountPOJO account) {
+        return getAccountWithName(account.getAccountName());
+    }
+
+    @Override
+    public void updateAccount(AccountPOJO account) {
+        super.update(account);
+    }
+
+    @Override
+    public void deleteAccount(AccountPOJO account) {
+        super.delete(AccountPOJO.class, account.getAccountID());
+    }
+
+    @Override
+    public void finalize() {
+        super.finalize();
+    }
+
+    @Override
+    public List<AccountPOJO> getAccountsWithClients() {
+        LOGGER.info("getAccountsWithClients Start");
+        em.getTransaction().begin();
+        Query query = em.createQuery("FROM AccountPOJO WHERE ClientID IS NOT NULL");
+        List<AccountPOJO> accounts = query.getResultList();
+        em.getTransaction().commit();
+        LOGGER.info("getAccountsWithClients End");
+        return accounts;
+    }
+
 }
+
+

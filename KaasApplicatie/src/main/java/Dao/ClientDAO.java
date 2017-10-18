@@ -279,4 +279,6 @@ public class ClientDAO implements ClientDAOInterface {
         LOGGER.info("deleteClient end");
     }
 
+     @Override
+    public void finalize(){};
 }

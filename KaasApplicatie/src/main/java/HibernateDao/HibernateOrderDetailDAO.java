@@ -5,6 +5,7 @@
  */
 package HibernateDao;
 
+import Interface.OrderDetailDAOInterface;
 import POJO.OrderDetailPOJO;
 import java.util.Arrays;
 import java.util.List;
@@ -17,18 +18,17 @@ import javax.persistence.Query;
  *
  * @author Gerben
  */
-public class HibernateOrderDetailDAO extends GenericDAO {
+public class HibernateOrderDetailDAO extends GenericDAO implements OrderDetailDAOInterface {
 
     private Logger LOGGER = Logger.getLogger(HibernateOrderDetailDAO.class.getName());
-   
-    
+
     public HibernateOrderDetailDAO(EntityManager em) {
         super(em);
     }
 
     @Override
-    public List<OrderDetailPOJO> getAll() {
-       LOGGER.info("getAllOrderDetail Start");
+    public List<OrderDetailPOJO> getAllOrderDetail() {
+        LOGGER.info("getAllOrderDetail Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM OrderDetailPOJO");
         List<OrderDetailPOJO> ordersDetails = query.getResultList();
@@ -36,9 +36,9 @@ public class HibernateOrderDetailDAO extends GenericDAO {
         LOGGER.info("getAllOrderDetail End");
         return ordersDetails;
     }
-    
+
     public List<OrderDetailPOJO> getWithOrder(int OrderID) {
-       LOGGER.info("getWithOrder Start");
+        LOGGER.info("getWithOrder Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM OrderDetailPOJO WHERE OrderID = :id");
         query.setParameter("id", OrderID);
@@ -47,9 +47,9 @@ public class HibernateOrderDetailDAO extends GenericDAO {
         LOGGER.info("getWithOrder End");
         return ordersDetails;
     }
-    
-     public List<OrderDetailPOJO> getWithCheese(int CheeseID) {
-       LOGGER.info("getWithOrder Start");
+
+    public List<OrderDetailPOJO> getWithCheese(int CheeseID) {
+        LOGGER.info("getWithOrder Start");
         em.getTransaction().begin();
         Query query = em.createQuery("FROM OrderDetailPOJO WHERE CheeseID = :id");
         query.setParameter("id", CheeseID);
@@ -58,8 +58,31 @@ public class HibernateOrderDetailDAO extends GenericDAO {
         LOGGER.info("getWithOrder End");
         return ordersDetails;
     }
-     
-     
-    
-    
+
+    @Override
+    public Integer addOrderDetail(OrderDetailPOJO orderDetail) {
+        OrderDetailPOJO orderdetail2 = super.create(orderDetail);
+        return orderdetail2.getOrderDetailID();
+    }
+
+    @Override
+    public List<OrderDetailPOJO> getOrderDetail(OrderDetailPOJO orderdetail) {
+        return getWithOrder(orderdetail.getOrder().getOrderID());
+    }
+
+    @Override
+    public OrderDetailPOJO getOrderDetailWithID(OrderDetailPOJO orderdetail) {
+        return super.findById(OrderDetailPOJO.class, orderdetail.getOrderDetailID());
+    }
+
+    @Override
+    public void deleteOrderDetail(OrderDetailPOJO orderDetail) {
+        super.delete(OrderDetailPOJO.class, orderDetail.getOrderDetailID());
+    }
+
+    @Override
+    public void updateOrderDetail(OrderDetailPOJO orderDetail) {
+        super.update(orderDetail);
+    }
+
 }

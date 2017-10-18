@@ -5,6 +5,7 @@ import Helper.HibernateDaoFactory;
 import Helper.IDCheck;
 import HibernateDao.HibernateAccountDAO;
 import HibernateDao.HibernateClientDAO;
+import Interface.AccountDAOInterface;
 import Interface.ClientDAOInterface;
 import POJO.AccountPOJO;
 import POJO.ClientPOJO;
@@ -17,15 +18,14 @@ public class ClientController {
     private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
     private ClientDAOInterface clientdao;
     private ClientPOJO clientpojo;
-    private HibernateClientDAO hibClientDAO;
     private AccountPOJO accountpojo;
-    private HibernateAccountDAO hibAccountDAO;
+    private AccountDAOInterface accountdao;
 
     public ClientController() {
-        this.hibClientDAO = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
+        clientdao = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
         this.clientpojo = new ClientPOJO();
         this.accountpojo = new AccountPOJO();
-        this.hibAccountDAO = (HibernateAccountDAO) HibernateDaoFactory.getInstance().getDao("account");
+        accountdao = (HibernateAccountDAO) HibernateDaoFactory.getInstance().getDao("account");
     }
 
     public ClientController(ClientDAOInterface clientdao) {
@@ -36,17 +36,19 @@ public class ClientController {
     public void newClient(String firstname, String lastname, String email, int accountID) {
         LOGGER.info("newClient start");
         try {
-            accountpojo = hibAccountDAO.findById(AccountPOJO.class, accountID);
+            accountpojo.setAccountID(accountID);
+            accountpojo = accountdao.getAccount(accountpojo);
             if (accountpojo.getClient() == null) {
-                accountpojo = hibAccountDAO.findById(AccountPOJO.class, accountID);
+                accountpojo.setAccountID(accountID);
+                accountpojo = accountdao.getAccount(accountpojo);
                 clientpojo.setAccount(accountpojo);
                 clientpojo.setFirstName(firstname);
                 clientpojo.setLastName(lastname);
                 clientpojo.setEMail(email);
-                hibClientDAO.create(clientpojo);
+                clientdao.addClient(clientpojo);
                 accountpojo.setClient(clientpojo);
-                hibAccountDAO.update(clientpojo);
-                hibClientDAO.finalize();
+                accountdao.updateAccount(accountpojo);
+                clientdao.finalize();
                 System.out.println("New Client added with the ClientID of: " + clientpojo.getClientID());
                 LOGGER.info("newClient end");
             } else {
@@ -66,8 +68,9 @@ public class ClientController {
             return;
         }
         try {
-            hibClientDAO.delete(ClientPOJO.class, clientID);
-            hibClientDAO.finalize();
+            clientpojo.setClientID(clientID);
+            clientdao.deleteClient(clientpojo);
+            clientdao.finalize();
             System.out.println("Client removed.");
         } catch (Exception E) {
             System.out.println("Has to be an existing Client.");
@@ -79,8 +82,8 @@ public class ClientController {
 
     public void getAllClients() {
         LOGGER.info("getallClient end");
-        System.out.println(hibClientDAO.getAll());
-        hibClientDAO.finalize();
+        System.out.println(clientdao.getAllClient());
+        clientdao.finalize();
         LOGGER.info("getallClient end");
 
     }
@@ -88,12 +91,13 @@ public class ClientController {
     public String editClient(int clientID, String firstName, String lastName, String eMail) {
         LOGGER.info("edditClient end");
         try {
-            ClientPOJO client = hibClientDAO.findById(ClientPOJO.class, clientID);
+            clientpojo.setClientID(clientID);
+            ClientPOJO client = clientdao.getClient(clientpojo);
             client.setFirstName(firstName);
             client.setLastName(lastName);
             client.setEMail(eMail);
-            hibClientDAO.update(client);
-            hibClientDAO.finalize();
+            clientdao.updateClient(client);
+            clientdao.finalize();
             LOGGER.info("editClient end");
             return "client eddited";
         } catch (Exception E) {
@@ -104,10 +108,11 @@ public class ClientController {
     public String editClientFirstName(int clientID, String firstName) {
         LOGGER.info("edit clientFirstName start");
         try {
-            ClientPOJO client = hibClientDAO.findById(ClientPOJO.class, clientID);
+            clientpojo.setClientID(clientID);
+            ClientPOJO client = clientdao.getClient(clientpojo);
             client.setFirstName(firstName);
-            hibClientDAO.update(client);
-            hibClientDAO.finalize();
+            clientdao.updateClient(client);
+            clientdao.finalize();
             LOGGER.info("editClient First Name end");
             return "Client first name has been edited. ";
         } catch (Exception E) {
@@ -118,10 +123,11 @@ public class ClientController {
     public String editClientLastName(int clientID, String lastName) {
         LOGGER.info("edit clientFirstName start");
         try {
-            ClientPOJO client = hibClientDAO.findById(ClientPOJO.class, clientID);
+           clientpojo.setClientID(clientID);
+            ClientPOJO client = clientdao.getClient(clientpojo);
             client.setLastName(lastName);
-            hibClientDAO.update(client);
-            hibClientDAO.finalize();
+           clientdao.updateClient(client);
+            clientdao.finalize();
             LOGGER.info("editClient First Name end");
             return "Client first name has been edited. ";
         } catch (Exception E) {
@@ -132,10 +138,11 @@ public class ClientController {
     public String editClientEMail(int clientID, String eMail) {
         LOGGER.info("edit clientemail start");
         try {
-            ClientPOJO client = hibClientDAO.findById(ClientPOJO.class, clientID);
+            clientpojo.setClientID(clientID);
+            ClientPOJO client = clientdao.getClient(clientpojo);
             client.setEMail(eMail);
-            hibClientDAO.update(client);
-            hibClientDAO.finalize();
+            clientdao.updateClient(client);
+            clientdao.finalize();
             LOGGER.info("editClient email end");
             return "Client email has been edited. ";
         } catch (Exception E) {
@@ -145,32 +152,32 @@ public class ClientController {
 
     public void findClientWithID(int clientID) {
         LOGGER.info("findclient with id");
-        System.out.println(hibClientDAO.findById(ClientPOJO.class, clientID));
-        hibClientDAO.finalize();
+        System.out.println(clientdao.getClient(clientpojo));
+        clientdao.finalize();
         LOGGER.info("findclient with id");
 
     }
 
     public void findClientWithFirstName(String firstName) {
         LOGGER.info("findclient with first name start");
-        System.out.println(hibClientDAO.getClientWithFirstName(firstName));
-        hibClientDAO.finalize();
+        System.out.println(clientdao.getClientWithFirstName(firstName));
+        clientdao.finalize();
         LOGGER.info("findclient with first name end");
 
     }
 
     public void findClientWithLastName(String lastName) {
         LOGGER.info("findclient with last name start");
-        System.out.println(hibClientDAO.getClientWithLastName(lastName));
-        hibClientDAO.finalize();
+        System.out.println(clientdao.getClientWithLastName(lastName));
+        clientdao.finalize();
         LOGGER.info("findclient with last name end");
 
     }
 
     public void findClientWithEMail(String eMail) {
         LOGGER.info("findclient with email start");
-        System.out.println(hibClientDAO.getClientWithEmail(eMail));
-        hibClientDAO.finalize();
+        System.out.println(clientdao.getClientWithEmail(eMail));
+        clientdao.finalize();
         LOGGER.info("findclient with email end");
 
     }

@@ -8,6 +8,7 @@ package MongoDao;
 import DatabaseConnector.MongoConnector;
 import Interface.AccountDAOInterface;
 import POJO.AccountPOJO;
+import POJO.ClientPOJO;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import static com.mongodb.client.model.Filters.eq;
@@ -131,6 +132,14 @@ public class AccountMongoDao implements AccountDAOInterface {
         collection.findOneAndDelete(eq("AccountID", account.getAccountID()));
         mongoConnector.closeConnection();
         logger.info("deleteAccount End");
+    }
+    
+    @Override
+    public void finalize(){};
+
+    @Override
+    public List<AccountPOJO> getAccountsWithClients() {
+        throw new UnsupportedOperationException("Not necessary yet."); 
     }
 
 }

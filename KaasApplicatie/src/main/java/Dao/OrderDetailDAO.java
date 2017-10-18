@@ -241,5 +241,13 @@ public class OrderDetailDAO implements OrderDetailDAOInterface {
         }
         LOGGER.info("deleteOrderDetail end");
     }
+    
+     @Override
+    public void finalize(){};
+
+    @Override
+    public List<OrderDetailPOJO> getWithCheese(int CheeseID) {
+        throw new UnsupportedOperationException("Not needed in this DAO."); 
+    }
 
 }

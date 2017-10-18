@@ -181,4 +181,12 @@ public class OrderDetailMongoDao implements OrderDetailDAOInterface {
             mongoConnector.closeConnection();
         }
     }
+    
+      @Override
+    public void finalize(){};
+
+    @Override
+    public List<OrderDetailPOJO> getWithCheese(int CheeseID) {
+        throw new UnsupportedOperationException("Not needed in this DAO."); 
+    }
 }
