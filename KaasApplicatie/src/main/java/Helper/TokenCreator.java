@@ -9,11 +9,13 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Gerben
  */
+@Component
 public class TokenCreator {
 
     private static String user;

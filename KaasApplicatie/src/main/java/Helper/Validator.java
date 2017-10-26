@@ -10,11 +10,13 @@ import org.apache.commons.validator.routines.IntegerValidator;
 import static org.apache.commons.validator.GenericValidator.isBlankOrNull;
 import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Gerben
  */
+@Component
 public class Validator {
 
     private int intValidation;

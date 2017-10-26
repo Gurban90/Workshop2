@@ -5,23 +5,28 @@
  */
 package Helper;
 
-import Controller.CheeseController;
-import Controller.OrderController;
+import Cheese.CheeseController;
+import Order.OrderController;
 import DatabaseConnector.DomXML;
-import HibernateDao.HibernateOrderDAO;
-import HibernateDao.HibernateOrderDetailDAO;
-import Interface.OrderDAOInterface;
-import Interface.OrderDetailDAOInterface;
-import POJO.CheesePOJO;
-import POJO.OrderDetailPOJO;
-import POJO.OrderPOJO;
+import Order.HibernateOrderDAO;
+import Order.HibernateOrderDetailDAO;
+import Order.OrderDAOInterface;
+import Order.OrderDetailDAOInterface;
+import Cheese.CheesePOJO;
+import Order.OrderDetailPOJO;
+import Order.OrderPOJO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Jasper Thielen
  */
+@Component
+@ComponentScan("DatabaseConnector")
 public class HelpClientOrderCheese {
 
     private int orderID;
@@ -50,12 +55,19 @@ public class HelpClientOrderCheese {
     private OrderPOJO returnedOrderPOJO;
     private CheesePOJO returnedCheesePOJO;
 
+    @Autowired
     private CheeseController cheeseController;
+    @Autowired
     private OrderController orderController;
+    @Autowired
     private DomXML data;
+    @Autowired
+    private OrderDAOInterface orderDAO;
+    @Autowired
+    private OrderDetailDAOInterface orderDetailDAO;
 
     public HelpClientOrderCheese() {
-        data = new DomXML();
+
     }
 
     public LocalDateTime setNewOrderByClient(int year, int month, int day, int hour, int min) {
@@ -84,12 +96,6 @@ public class HelpClientOrderCheese {
         this.orderID = orderID;
     }
 
-    public void getOrder(int clientIDint) {
-
-        orderController = new OrderController();
-        this.orderID = orderController.addOrder(orderDate, zeroTotalPrice, processedDate, clientIDint);
-        System.out.println(this.orderID);
-    }
 
     public void setOrderDetail(int cheeseID, int ammountCheese) {
         this.ammountCheese = ammountCheese;
@@ -97,7 +103,6 @@ public class HelpClientOrderCheese {
     }
 
     public void getSingleCheesePrice() {
-        CheeseController cheeseController = new CheeseController();
 
         returnedCheesePOJO = new CheesePOJO();
         returnedCheesePOJO = cheeseController.findCheese(cheeseID);
@@ -105,8 +110,6 @@ public class HelpClientOrderCheese {
     }
 
     public void getOrderDetail() {
-
-        orderController = new OrderController();
 
         orderController.addOrderDetail(ammountCheese, orderID, cheeseID);
     }
@@ -122,7 +125,6 @@ public class HelpClientOrderCheese {
     }
 
     public String saveTotalPrice() {
-        OrderDAOInterface orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
         OrderPOJO order = new OrderPOJO();
         order.setOrderID(orderID);
         returnedOrderPOJO = orderDAO.getOrder(order);
@@ -139,21 +141,18 @@ public class HelpClientOrderCheese {
     }
 
     public String minusCheese(int orderDetailId, int orderId, boolean edit) {
-        OrderDAOInterface orderDAO = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
-        OrderDetailDAOInterface orderDetailDAO = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
-        CheeseController cheesecontrol = new CheeseController();
-        
+
         OrderDetailPOJO orderdetail = new OrderDetailPOJO();
         orderdetail.setOrderDetailID(orderDetailId);
         OrderDetailPOJO returnOrderDetail = orderDetailDAO.getOrderDetailWithID(orderdetail);
         OrderPOJO order = new OrderPOJO();
         order.setOrderID(orderId);
         OrderPOJO returnorder = orderDAO.getOrder(order);
-       
+
         if (edit) {
             BigDecimal overallPrice = returnorder.getTotalPrice();
             BigDecimal quantity = new BigDecimal(returnOrderDetail.getQuantity());
-            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheese().getCheeseID());
+            CheesePOJO cheese = cheeseController.findCheese(returnOrderDetail.getCheese().getCheeseID());
             BigDecimal price = cheese.getPrice();
 
             overallPrice = overallPrice.add(price.multiply(quantity));
@@ -164,7 +163,7 @@ public class HelpClientOrderCheese {
         } else {
             BigDecimal overallPrice = returnorder.getTotalPrice();
             BigDecimal quantity = new BigDecimal(returnOrderDetail.getQuantity());
-            CheesePOJO cheese = cheesecontrol.findCheese(returnOrderDetail.getCheese().getCheeseID());
+            CheesePOJO cheese = cheeseController.findCheese(returnOrderDetail.getCheese().getCheeseID());
             BigDecimal price = cheese.getPrice();
 
             overallPrice = overallPrice.subtract(price.multiply(quantity));
@@ -182,10 +181,8 @@ public class HelpClientOrderCheese {
         int oldStock = 0;
         int newStock = 0;
 
-        cheeseController = new CheeseController();
-
         CheesePOJO x = cheeseController.findCheese(cheeseID);
-                
+
         oldStock = x.getStock();
 
         if (oldStock - ammountCheese >= 0) {

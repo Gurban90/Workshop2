@@ -6,33 +6,41 @@
 package Helper;
 
 import DatabaseConnector.DomXML;
-import HibernateDao.HibernateCheeseDAO;
-import HibernateDao.HibernateClientDAO;
-import HibernateDao.HibernateOrderDAO;
-import HibernateDao.HibernateOrderDetailDAO;
-import Interface.CheeseDAOInterface;
-import Interface.ClientDAOInterface;
-import Interface.OrderDAOInterface;
-import Interface.OrderDetailDAOInterface;
-import POJO.CheesePOJO;
-import POJO.ClientPOJO;
-import POJO.OrderDetailPOJO;
-import POJO.OrderPOJO;
+import Cheese.HibernateCheeseDAO;
+import Client.HibernateClientDAO;
+import Order.HibernateOrderDAO;
+import Order.HibernateOrderDetailDAO;
+import Cheese.CheeseDAOInterface;
+import Client.ClientDAOInterface;
+import Order.OrderDAOInterface;
+import Order.OrderDetailDAOInterface;
+import Cheese.CheesePOJO;
+import Client.ClientPOJO;
+import Order.OrderDetailPOJO;
+import Order.OrderPOJO;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IDCheck {
 
-    private DomXML data;
+   
+    @Autowired
+    private CheeseDAOInterface CheeseDao;
+    @Autowired
+    private ClientDAOInterface ClientDao;
+    @Autowired
+    private OrderDetailDAOInterface OrderDetailDao;
+    @Autowired
+    private OrderDAOInterface OrderDao;
+    @Autowired
+    ClientPOJO client;
 
-    public IDCheck() {
-        data = new DomXML();
-    }
-
+  
     public boolean checkCheeseID(int sendID) {
 
-        CheeseDAOInterface Dao = (HibernateCheeseDAO) HibernateDaoFactory.getInstance().getDao("cheese");
-
-        List<CheesePOJO> list = Dao.getAllCheese();
+        List<CheesePOJO> list = CheeseDao.getAllCheese();
         for (CheesePOJO idsearch : list) {
             int returnedid = idsearch.getCheeseID();
 
@@ -45,9 +53,7 @@ public class IDCheck {
 
     public boolean checkClientID(int sendID) {
 
-        ClientDAOInterface Dao = (HibernateClientDAO) HibernateDaoFactory.getInstance().getDao("client");
-
-        List<ClientPOJO> list = Dao.getAllClient();
+        List<ClientPOJO> list = ClientDao.getAllClient();
         for (ClientPOJO idsearch : list) {
             int returnedid = idsearch.getClientID();
 
@@ -60,9 +66,8 @@ public class IDCheck {
 
     public boolean checkCheeseOrder(int cheeseID) {
         boolean isOrdered = true;
-        OrderDetailDAOInterface Dao = (HibernateOrderDetailDAO) HibernateDaoFactory.getInstance().getDao("orderdetail");
 
-        List<OrderDetailPOJO> list = Dao.getWithCheese(cheeseID);
+        List<OrderDetailPOJO> list = OrderDetailDao.getWithCheese(cheeseID);
         if (list.isEmpty()) {
             isOrdered = false;
         }
@@ -71,11 +76,10 @@ public class IDCheck {
 
     public boolean checkClientOrder(int clientID) {
         boolean isOrdered = true;
-        OrderDAOInterface Dao = (HibernateOrderDAO) HibernateDaoFactory.getInstance().getDao("order");
-        ClientPOJO client = new ClientPOJO();
+
         client.setClientID(clientID);
 
-        List<OrderPOJO> list = Dao.getOrderWithClient(client);
+        List<OrderPOJO> list = OrderDao.getOrderWithClient(client);
         if (list.isEmpty()) {
             isOrdered = false;
         }

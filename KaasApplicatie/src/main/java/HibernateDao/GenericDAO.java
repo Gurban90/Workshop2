@@ -5,6 +5,7 @@
  */
 package HibernateDao;
 
+import Helper.HibernateDaoFactory;
 import java.util.List;
 import javax.persistence.EntityManager;
 
@@ -14,13 +15,9 @@ import javax.persistence.EntityManager;
  */
 public abstract class GenericDAO {
 
-    protected EntityManager em;
-
-    public GenericDAO(EntityManager em) {
-        this.em = em;
-    }
+   public GenericDAO(){};
     
-    public GenericDAO(){};
+    protected EntityManager em = HibernateDaoFactory.getEntityManger();
 
     public <T> T create(T entity) {
         em.getTransaction().begin();

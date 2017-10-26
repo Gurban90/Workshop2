@@ -8,11 +8,13 @@ package Helper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Gerben
  */
+@Component
 public class PasswordHasher {
 
     private SecureRandom random;

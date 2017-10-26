@@ -11,12 +11,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.xml.parsers.*;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 /**
  *
  * @author Gerben
  */
+@Component
 public class DomXML {
 
     DocumentBuilder builder = null;

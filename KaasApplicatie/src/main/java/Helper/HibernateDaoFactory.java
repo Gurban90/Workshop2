@@ -6,12 +6,13 @@
 package Helper;
 
 import HibernateDao.GenericDAO;
-import HibernateDao.HibernateAccountDAO;
-import HibernateDao.HibernateAddressDAO;
-import HibernateDao.HibernateCheeseDAO;
-import HibernateDao.HibernateClientDAO;
-import HibernateDao.HibernateOrderDAO;
-import HibernateDao.HibernateOrderDetailDAO;
+import Account.HibernateAccountDAO;
+import Address.HibernateAddressDAO;
+import Cheese.HibernateCheeseDAO;
+import Client.HibernateClientDAO;
+import Order.HibernateOrderDAO;
+import Order.HibernateOrderDetailDAO;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -23,41 +24,29 @@ public class HibernateDaoFactory {
 
     private static HibernateDaoFactory instance;
     private static EntityManagerFactory entityManagerFactory;
+    private static EntityManager em;
 
     private HibernateDaoFactory() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("Hibernate");
+       
     }
-    
-    public static HibernateDaoFactory getInstance(){
-        if(instance == null){
+
+    public static HibernateDaoFactory getInstance() {
+        if (instance == null) {
             instance = new HibernateDaoFactory();
         }
         return instance;
     }
 
-
-    public GenericDAO getDao(String classname) {
-        classname = classname.toLowerCase();
-        switch (classname) {
-            case "account":
-                return new HibernateAccountDAO(entityManagerFactory.createEntityManager());
-            case "address":
-                return new HibernateAddressDAO(entityManagerFactory.createEntityManager());
-            case "cheese":
-                return new HibernateCheeseDAO(entityManagerFactory.createEntityManager());
-            case "client":
-                return new HibernateClientDAO(entityManagerFactory.createEntityManager());
-            case "order":
-                return new HibernateOrderDAO(entityManagerFactory.createEntityManager());
-            case "orderdetail":
-                return new HibernateOrderDetailDAO(entityManagerFactory.createEntityManager());
-            default:
-                throw new IllegalArgumentException("No DAO with that name.");
+    public static EntityManager getEntityManger() {
+        if (em == null) {
+            entityManagerFactory = Persistence.createEntityManagerFactory("Hibernate");
+            em = entityManagerFactory.createEntityManager();
         }
+        return em;
     }
 
     public static void close() {
         entityManagerFactory.close();
-        instance=null;
+        instance = null;
     }
 }
